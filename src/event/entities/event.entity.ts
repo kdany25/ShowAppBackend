@@ -1,14 +1,14 @@
-/* eslint-disable prettier/prettier */
 import { Organisation } from "src/organisation/entities/organisation.entity";
 import { Ticket } from "src/ticket/entities/ticket.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('events')
 export class Event {
-
+   
     @PrimaryGeneratedColumn('uuid')
     eventId:string;
 
+   
     @Column({nullable:false})    
     title:string;
 
@@ -31,28 +31,33 @@ export class Event {
     eventCategory:string;
 
     @Column({nullable:true})
-    vvipAvailabelSeats:string;
+    vvipAvailabelSeats:number;
 
     @Column({nullable:true})
-    vvipPrice:string;
-
-
-    @Column({nullable:true})
-    vipAvailabelSeats:string;
+    vvipPrice:number;
 
     @Column({nullable:true})
-    vipPrice:string;;
+    vipAvailabelSeats:number;
 
     @Column({nullable:true})
-    regularAvailabelSeats:string;
+    vipPrice:number;
 
     @Column({nullable:true})
-    regularPrice:string;
+    regularAvailabelSeats:number;
 
-    @ManyToOne(()=>Organisation,(organisation)=>organisation.events )
+    @Column({nullable:true})
+    regularPrice:number;
+
+    @Column({nullable:true})
+    isCanceled:boolean;
+
+    @ManyToOne(()=>Organisation,(organisation)=>organisation.events,{
+    })
     organisation:Organisation;
 
-    @OneToMany(()=>Ticket,(ticket)=>ticket.event)
+    @OneToMany(()=>Ticket,(ticket)=>ticket.event,{
+        cascade:true
+    })
     tickets:Ticket[];
 
 }

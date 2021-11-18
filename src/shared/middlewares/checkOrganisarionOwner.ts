@@ -1,5 +1,1 @@
-
-
-export default class CheckOrganisationOwner {
-   
-}
+export default class CheckOrganisationOwner {}
