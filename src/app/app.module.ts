@@ -5,6 +5,7 @@ import { Event } from 'src/event/entities/event.entity';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
 import { User } from 'src/user/entities/user.entity';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { User } from 'src/user/entities/user.entity';
       synchronize: true,
 
     }),
+    UserModule,
   ],
   controllers: [],
   providers: [],
