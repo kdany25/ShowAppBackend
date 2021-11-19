@@ -1,10 +1,12 @@
 import { ValidationPipe } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 import { config, customOptions } from './shared/config/docs.config';
 import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
+
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -26,5 +28,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   await app.listen(3000);
+
 }
 bootstrap();

@@ -34,7 +34,7 @@ export class User {
     @Column({nullable : false,default:'https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg'})
     avatar : string;
 
-    @Column({ type: 'enum', enum: ['MALE', 'FEMALE', 'OTHER'], nullable: false })
+    @Column({ type: 'enum', enum: ['MALE', 'FEMALE', 'OTHER'], nullable: true })
     gender : 'MALE'|'FEMALE'|'OTHER';
 
     @OneToMany(()=>Organisation,(organisation)=>organisation.user)
