@@ -49,8 +49,8 @@ export class Event {
     @Column({nullable:true})
     regularPrice:string;
 
-    @ManyToOne(()=>Organisation,(organisation)=>organisation.event)
-    organisation:Organisation[];
+    @ManyToOne(()=>Organisation,(organisation)=>organisation.events )
+    organisation:Organisation;
 
     @OneToMany(()=>Ticket,(ticket)=>ticket.event)
     tickets:Ticket[];

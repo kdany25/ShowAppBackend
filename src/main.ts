@@ -6,6 +6,8 @@ import { config } from './shared/config/docs.config';
 import * as cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
+
+  
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -24,7 +26,6 @@ async function bootstrap() {
   // somewhere in your initialization file
   app.use(cookieParser());
 
-  SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
 bootstrap();

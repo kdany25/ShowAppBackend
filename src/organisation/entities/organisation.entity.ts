@@ -8,8 +8,11 @@ export class Organisation {
     @PrimaryGeneratedColumn('uuid')
     organisationId:string;
 
-    @Column({nullable:false})
+    @Column({nullable:false,unique:true})
     name:string;
+
+    @Column({nullable : true,unique:true})
+    email : string
     
     @Column({nullable:false,default:''})
     avatar:string;
@@ -20,10 +23,10 @@ export class Organisation {
     @Column({nullable:false})
     address:string;
 
-    @ManyToOne(()=>User,(user)=>user.organisation)
+    @ManyToOne(()=>User,(user)=>user.organisation,{cascade:true,eager:true})
     user:User;
 
-    @OneToMany(()=>Event,(event)=>event.organisation)
-    event:Event;
+    @OneToMany(()=>Event,(event)=>event.organisation,{cascade:true})
+    events:Event[];
 
 }
