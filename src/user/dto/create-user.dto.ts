@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsEmail, IsDate, IsIn, IsArray,IsNotEmpty } from 'class-validator';
+import { IsEmail, IsDate, IsIn, IsArray,IsNotEmpty, IsOptional } from 'class-validator';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
 import { ApiProperty,ApiPropertyOptional } from '@nestjs/swagger';
@@ -34,11 +34,11 @@ export class CreateUserDto {
   
   @ApiProperty({ description: 'This is the user date of birth', default: '1996/01/16' })
   @IsNotEmpty()
-  @IsDate({message:'Date of Birth has to be a valid date'})
+  // @IsDate({message:'Date of Birth has to be a valid date'})
   dOb: Date;
 
+  @IsOptional()
   @ApiProperty({ description: 'This is the users avatar', default: 'Nthttps://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpgwari' })
-  @IsNotEmpty()
   avatar: string;
 
   @ApiProperty({ description: 'This is the user gender', default: 'MALE' })
@@ -46,9 +46,11 @@ export class CreateUserDto {
   @IsIn(['MALE','FEMALE','OTHER'])
   gender: 'MALE'|'FEMALE'|'OTHER';
 
+  @IsOptional()
   @IsArray()
   organisation:Organisation[];
 
+  @IsOptional()
   @IsArray()
   tickets: Ticket[];
 }
