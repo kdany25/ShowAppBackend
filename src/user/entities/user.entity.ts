@@ -5,7 +5,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn('uuid')
-    userId :string;
+    userId? :string;
 
     @Column({nullable : false})
     firstName : string
@@ -17,13 +17,16 @@ export class User {
     email : string
 
     @Column({nullable:false,type:'enum',enum:['USER','ORGANISER','ADMIN'],default:'USER'})
-    role:'USER'|'ORGANISER'|'ADMIN';
+    role?:'USER'|'ORGANISER'|'ADMIN';
 
     @Column({nullable : false})
     password : string
 
     @Column({nullable : false})
     phone : string
+
+    @Column({nullable : false,default:false})
+    isVerified? : boolean;
 
     @Column({nullable : false})
     dOb : Date
