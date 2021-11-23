@@ -6,6 +6,7 @@ import { EventModule } from 'src/event/event.module';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { OrganisationModule } from 'src/organisation/organisation.module';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
+import { TicketModule } from 'src/ticket/ticket.module';
 import { User } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 
@@ -25,7 +26,8 @@ import { UserModule } from 'src/user/user.module';
     }),
     UserModule,
     OrganisationModule,
-    EventModule
+    EventModule,
+    TicketModule 
   ],
   controllers: [],
   providers: [],

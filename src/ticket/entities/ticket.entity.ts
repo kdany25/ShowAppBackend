@@ -1,29 +1,20 @@
-/* eslint-disable prettier/prettier */
-import { Event } from "src/event/entities/event.entity";
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Event } from 'src/event/entities/event.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('tickets')
 export class Ticket {
+  id: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id:string;
+  seatCategory: string;
 
-    @Column({nullable:false})
-    seatCategory:string;
+  price: number;
 
-    @Column({ nullable:false })
-    price:number;
+  createdAt: Date;
 
-    @Column({nullable:false})
-    createdAt:Date;
+  refund: boolean;
 
-    
-    @ManyToOne(()=>Event,(event)=>event.tickets)
-    event:Event;
-    
-    @ManyToOne(()=>User,(user)=>user.tickets)
-    user:User;
-    
-    
+  event: Event;
+
+  user: User;
 }
