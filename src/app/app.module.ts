@@ -1,8 +1,8 @@
-/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Event } from 'src/event/entities/event.entity';
+import { EventModule } from 'src/event/event.module';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { OrganisationModule } from 'src/organisation/organisation.module';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
@@ -24,7 +24,8 @@ import { UserModule } from 'src/user/user.module';
 
     }),
     UserModule,
-    OrganisationModule
+    OrganisationModule,
+    EventModule
   ],
   controllers: [],
   providers: [],

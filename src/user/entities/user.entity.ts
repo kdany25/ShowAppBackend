@@ -8,31 +8,31 @@ export class User {
     userId? :string;
 
     @Column({nullable : false})
-    firstName : string
+    firstName : string;
 
     @Column({nullable : false})
-    lastName : string
+    lastName : string;
 
     @Column({nullable : false})
-    email : string
+    email : string;
 
     @Column({nullable:false,type:'enum',enum:['USER','ORGANISER','ADMIN'],default:'USER'})
     role?:'USER'|'ORGANISER'|'ADMIN';
 
     @Column({nullable : false})
-    password : string
+    password : string;
 
     @Column({nullable : false})
-    phone : string
+    phone : string;
 
     @Column({nullable : false,default:false})
     isVerified? : boolean;
 
     @Column({nullable : false})
-    dOb : Date
+    dOb : Date;
 
     @Column({nullable : false,default:'https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg'})
-    avatar : string
+    avatar : string;
 
     @Column({ type: 'enum', enum: ['MALE', 'FEMALE', 'OTHER'], nullable: false })
     gender : 'MALE'|'FEMALE'|'OTHER';
