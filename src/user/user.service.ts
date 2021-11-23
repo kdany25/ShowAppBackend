@@ -122,8 +122,8 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User> {
    const user = await this.userRepository.findOne({where:{email:email}});
-   if(!user) throw new NotFoundException({statusCode: 404, error: `You don't have account with this email: ${email}!`});
-   if(!user.isVerified) throw new ForbiddenException({statusCode: 403, error: `Please verify your account first!`});
+   if(!user) throw new UnauthorizedException ({statusCode: 401, error: `You don't have account with this email: ${email}!`});
+   if(!user.isVerified) throw new UnauthorizedException ({statusCode: 401, error: `Please verify your account first!`});
 
     return user;
   }

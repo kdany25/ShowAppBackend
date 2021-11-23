@@ -4,11 +4,9 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 
 @Entity('events')
 export class Event {
-   
-    @PrimaryGeneratedColumn('uuid')
+ @PrimaryGeneratedColumn('uuid')
     eventId:string;
-
-   
+    
     @Column({nullable:false})    
     title:string;
 
