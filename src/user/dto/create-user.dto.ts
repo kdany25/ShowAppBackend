@@ -46,10 +46,16 @@ export class CreateUserDto {
   @IsIn(['MALE','FEMALE','OTHER'])
   gender: 'MALE'|'FEMALE'|'OTHER';
 
+  @ApiProperty({
+    description: 'These are organisations created by the user',
+  })
   @IsOptional()
   @IsArray()
   organisation:Organisation[];
 
+  @ApiProperty({
+    description: 'These are tickets by the user ',
+  })
   @IsOptional()
   @IsArray()
   tickets: Ticket[];

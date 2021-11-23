@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Headers, Delete, Res, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { userLoginDto } from './dto/login.dto';
@@ -8,13 +7,15 @@ import { Response, Request } from 'express';
 import { requestResetDto } from './dto/requestReset.dto';
 import { resetPasswordDto } from './dto/resetPassword.dto';
 import { changePasswordDto } from './dto/changePassword.dto';
-
+import { ApiAcceptedResponse, ApiResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse, } from '@nestjs/swagger';
 
 @ApiTags('User CRUD')
 @Controller('/user')
 export class UserController {
   constructor( private readonly userService: UserService) { }
 
+  @ApiCreatedResponse({ status: 201, description:'User succesfully created'})
+  @ApiBody({type:CreateUserDto})
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response): Promise<any> {
     await this.userService.findUserByEmail(createUserDto.email)
@@ -31,13 +32,18 @@ export class UserController {
     }
   }
 
+  @ApiAcceptedResponse({ status:202,description:"User successfully verified"})
+  @ApiForbiddenResponse({ status: 403, description: "Invalid or invalid token" })
+  @ApiNotFoundResponse({ status:404, description: "User not found" })
   @Patch('verify/:token')
   async verifyUser(@Param('token') token: string, @Res() res:Response) {
-    const decodedToken = await this.userService.verifyToken(token)
-    console.log(decodedToken)
-  //  const email = await this.userService.findUserByEmail(decodedToken)
-    await this.userService.verifyUser(decodedToken.email)
-    return  res.status(202).json({message:"User succesfully verified"})
+    try {
+      const decodedToken = await this.userService.verifyToken(token)
+      await this.userService.verifyUser(decodedToken.email)
+      return  res.status(202).json({message:"User succesfully verified"})  
+    } catch (error) {
+      return res.status(500).json({ statusCode: 500, error: error.message })
+    }
   }
 
   @Get('/all')
