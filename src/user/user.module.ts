@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -15,8 +16,11 @@ import { ConfigModule } from '@nestjs/config';
         expiresIn: process.env.EXPIREIN,
       },
     }),
+    PassportModule,
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports:[UserService]
+  
 })
 export class UserModule { }
