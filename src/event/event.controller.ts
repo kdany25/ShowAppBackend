@@ -1,19 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Res } from '@nestjs/common';
 import { EventService } from './event.service';
-import { CreateEventDto } from './dto/create-event.dto';
+import { CreateEventDto} from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ApiAcceptedResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse,  } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @Controller('event')
-@ApiTags('event')
+@ApiTags('Event')
 export class EventController {
   constructor( private eventService: EventService) {}
 
   @Post()
   @ApiCreatedResponse({description:'the event has been created'})
   @ApiBody({type:CreateEventDto})
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventService.create(createEventDto);
+  async create(@Body() createEventDto: CreateEventDto) {
+    
+    return await this.eventService.create(createEventDto);
+    
   }
 
   @Get()
@@ -37,7 +40,7 @@ export class EventController {
   @ApiBody({type:UpdateEventDto})
   @ApiUnauthorizedResponse({description:'invalid credentials'})
   cancelEvent(@Param('id')id:string,@Body() updateEventDto: UpdateEventDto){
-    return this.eventService.update(id,updateEventDto);
+    return this.eventService.cancelEvent(id,updateEventDto);
   }
 
 
@@ -62,7 +65,14 @@ export class EventController {
   @Delete(':id')
   @ApiOkResponse({description:'event is removed success'})
   @ApiNotFoundResponse({description:'Invalid Id'})
-  remove(@Param('id') id: string) {
-    return this.eventService.remove(id);
+  public async remove(@Param('id') id: string) {
+    const event = await this.findOne(id);
+    if (!event) {
+        throw new NotFoundException(`Event #${event} not found`);
+    }
+    return  await this.eventService.remove(id);
   }
+
+ 
+
 }

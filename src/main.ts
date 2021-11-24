@@ -7,7 +7,6 @@ import { config, customOptions } from './shared/config/docs.config';
 import * as cookieParser from 'cookie-parser';
 import * as helmet from 'helmet';
 async function bootstrap() {
-
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
@@ -18,7 +17,6 @@ async function bootstrap() {
   );
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, customOptions);
-
   // enable cors to allow frontend to consum api
   app.enableCors({
     methods: 'GET, POST, PUT, PATCH, DELETE',

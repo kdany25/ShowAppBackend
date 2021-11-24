@@ -1,12 +1,15 @@
+import { Transform } from "class-transformer";
 import { Organisation } from "src/organisation/entities/organisation.entity";
 import { Ticket } from "src/ticket/entities/ticket.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 
 @Entity('events')
 export class Event {
- @PrimaryGeneratedColumn('uuid')
+   
+    @PrimaryGeneratedColumn('uuid')
     eventId:string;
-    
+
+   
     @Column({nullable:false})    
     title:string;
 
@@ -16,11 +19,17 @@ export class Event {
     @Column({nullable:false})
     description:string;
 
-    @Column({nullable:false})
-    eventDate:Date;
+    @Column({nullable:true,type: 'timestamptz'})
+    eventStartDate:Date;
 
-    @Column({nullable:false})
-    eventHour:Date
+    @Column({nullable:true,type: 'timestamptz'})
+    eventEndDate:Date;
+
+    @Column({nullable:true,type: 'time'})
+    startHour:Date
+
+    @Column({nullable:true,type: 'time'})
+    endHour:Date
 
     @Column({nullable:false})
     isPublished:boolean;
