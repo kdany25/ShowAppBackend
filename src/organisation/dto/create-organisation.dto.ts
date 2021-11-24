@@ -42,18 +42,4 @@ export class CreateOrganisationDto {
     default: 'Kigali'})
     address:string;
     
-    @IsNotEmpty()
-    @ApiProperty({
-    description: 'The title of a todo',
-    default: {"firstName":"hugues",
-    "lastName":"Ntwari",
-    "email":"ntwari.hugues@gmail.com",
-    "role":"USER",
-    "password":"18700",
-    "phone":"0781407229",
-    "dOb":"1996/01/16",
-    "gender":"MALE",
-    "avatar":"https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg"
-}})
-    user:User;
 }
