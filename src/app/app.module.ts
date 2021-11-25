@@ -8,6 +8,8 @@ import { OrganisationModule } from 'src/organisation/organisation.module';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
 import { TicketModule } from 'src/ticket/ticket.module';
 import { User } from 'src/user/entities/user.entity';
+import { RequestRoleChange } from 'src/request-role-change/entities/request-role-change.entity';
+import { RequestRoleChangeModule } from 'src/request-role-change/request-role-change.module'
 import { UserModule } from 'src/user/user.module';
 
 @Module({
@@ -20,14 +22,15 @@ import { UserModule } from 'src/user/user.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User,Organisation,Event,Ticket],
+      entities: [User, Organisation, Event, Ticket, RequestRoleChange],
       synchronize: true,
 
     }),
     UserModule,
     OrganisationModule,
     EventModule,
-    TicketModule 
+    TicketModule ,
+    RequestRoleChangeModule
   ],
   controllers: [],
   providers: [],

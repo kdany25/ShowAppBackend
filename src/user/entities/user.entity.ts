@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Organisation } from 'src/organisation/entities/organisation.entity';
+import { RequestRoleChange } from 'src/request-role-change/entities/request-role-change.entity';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn('uuid')
@@ -42,4 +43,7 @@ export class User {
 
     @OneToMany(()=>Ticket,(ticket)=>ticket.user)
     tickets:Ticket[];
+
+    // @OneToOne(() => RequestRoleChange,(request) => request.user)
+    // request?:RequestRoleChange
 }
