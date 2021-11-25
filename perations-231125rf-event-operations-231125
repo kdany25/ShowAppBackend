@@ -1,0 +1,134 @@
+[33mcommit a80e5c3a39c90158229ad388c8344b572a2f7bd8[m[33m ([m[1;36mHEAD -> [m[1;32mrf-event-operations-231125[m[33m)[m
+Author: Placideh <h.uwizeyeplacide@gmail.com>
+Date:   Wed Nov 24 21:27:07 2021 +0200
+
+     feature(event):event operations
+    
+     -create event
+     -update event
+     -find event by id
+     -find event by title
+     -delete event
+     -cancel event
+     -get all events
+     -get events by organisation
+     -document apis with swagger
+     -document dto : CreateEventDto,UpdateEventDto
+     -add swagger config file
+     -enables prettier
+     -add new property on event entity
+     -add new property on CreatEventDto
+     -add validation
+    
+     [finishes #231125]
+
+[33mcommit 1b45302929006d174b07239d882526c059a877e5[m[33m ([m[1;31morigin/develop[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mdevelop[m[33m)[m
+Merge: f6e8de9 fcb8a2d
+Author: habaumugisha1 <habajeunes2@gmail.com>
+Date:   Tue Nov 23 01:07:51 2021 +0000
+
+    Merge branch 'ft-ticket-operations-231124' into 'develop'
+    
+    #231124 Ticket Operation
+    
+    See merge request tas11/showapp!7
+
+[33mcommit f6e8de91732e4941f19efba74099b1653871a5e0[m
+Merge: 8a001b1 cc1ac1f
+Author: Placideh <h.uwizeyeplacide@gmail.com>
+Date:   Tue Nov 23 00:13:05 2021 +0000
+
+    Merge branch 'ft-event-operations-231125' into 'develop'
+    
+    #231125 Event Operations
+    
+    See merge request tas11/showapp!5
+
+[33mcommit 8a001b14a30ec92a6915c9e2f2f46a24d1636dd3[m
+Merge: b64db91 70b3493
+Author: Edmond Ndayishimiye <ndedmondus97@gmail.com>
+Date:   Mon Nov 22 22:11:05 2021 +0000
+
+    Merge branch 'bg-organization-operations' into 'develop'
+    
+    bug(organisation):add organisation operations
+    
+    See merge request tas11/showapp!10
+
+[33mcommit b64db914cfd8309dbd4601d10e8838535d540176[m
+Merge: 8c59682 931e43f
+Author: Edmond Ndayishimiye <ndedmondus97@gmail.com>
+Date:   Mon Nov 22 20:18:55 2021 +0000
+
+    Merge branch 'ft-organization-operations-231126' into 'develop'
+    
+    #231126 add organisation operations
+    
+    See merge request tas11/showapp!8
+
+[33mcommit 8c5968251fb5f5be60bd5c13a0a548ba31f2a266[m
+Merge: 3e25883 76c228b
+Author: habaumugisha1 <habajeunes2@gmail.com>
+Date:   Mon Nov 22 19:34:15 2021 +0000
+
+    Merge branch 'ft-user-login-231128' into 'develop'
+    
+    #231128 user log in
+    
+    See merge request tas11/showapp!4
+
+[33mcommit 3e25883116d3669276e4b8fa8177a9dc42f86e41[m
+Merge: 40b4dd9 1f20c3c
+Author: NTWARI Hugues <ntwari.hugues@gmail.com>
+Date:   Mon Nov 22 12:34:12 2021 +0000
+
+    Merge branch 'ft-signup-231127' into 'develop'
+    
+    #231127 Register a new user
+    
+    See merge request tas11/showapp!6
+
+[33mcommit 40b4dd98af278a380512a2e614ce88469a6949b5[m
+Merge: 28f5cd6 c76ea4f
+Author: Edmond Ndayishimiye <ndedmondus97@gmail.com>
+Date:   Wed Nov 17 21:17:08 2021 +0000
+
+    Merge branch 'ch-entity-relationship-231123' into 'develop'
+    
+    chore(entities):create entities
+    
+    See merge request tas11/showapp!3
+
+[33mcommit 28f5cd69581ad3f18ead8665c3209fdfb464a064[m
+Merge: 1030449 bbda8ae
+Author: kabalisa dany <kabadany25@gmail.com>
+Date:   Wed Nov 17 08:19:07 2021 +0000
+
+    Merge branch 'ch-project-setup-231122' into 'develop'
+    
+    #[231122] Build folder structure for our project
+    
+    See merge request tas11/showapp!2
+
+[33mcommit 1030449aeb221dd051dee17416df4345ef9898af[m
+Merge: 0b45562 252b2de
+Author: NTWARI Hugues <ntwari.hugues@gmail.com>
+Date:   Tue Nov 16 13:52:16 2021 +0000
+
+    Merge branch 'ch-project-setup-231122' into 'develop'
+    
+    #[231122]  Build folder structure for our project
+    
+    See merge request tas11/showapp!1
+
+[33mcommit 0b45562f8331700eaaea6f17c8eb623897a5edf5[m[33m ([m[1;31morigin/staging[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m
+Author: NTWARI Hugues <ntwari.hugues@gmail.com>
+Date:   Mon Nov 15 08:04:15 2021 +0000
+
+    Configure SAST in `.gitlab-ci.yml`, creating this file if it does not already exist
+
+[33mcommit a47f3f6ccb89a491a81e43961b27b01c2adc6291[m
+Author: NTWARI Hugues <ntwari.hugues@gmail.com>
+Date:   Mon Nov 15 08:04:14 2021 +0000
+
+    Initial commit
