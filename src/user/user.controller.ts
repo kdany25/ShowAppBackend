@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Headers, Delete, Res, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Headers, Delete, Res, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,9 +7,11 @@ import { Response, Request } from 'express';
 import { requestResetDto } from './dto/requestReset.dto';
 import { resetPasswordDto } from './dto/resetPassword.dto';
 import { changePasswordDto } from './dto/changePassword.dto';
-import { ApiAcceptedResponse, ApiResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse, ApiBadRequestResponse, } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse, ApiBadRequestResponse, ApiBearerAuth, } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
-
+import { AuthGuard } from '@nestjs/passport';
+import { IsUserAdminGuard } from 'src/shared/guards/isUserAdmin';
+import { UserIsUserGuard } from 'src/shared/guards/UserIsLogedIn';
 
 @ApiTags('User CRUD')
 @Controller('/user')
@@ -47,31 +49,39 @@ export class UserController {
       return res.status(500).json({ statusCode: 500, error: error.message })
     }
   }
-
+ 
   @Get('/all')
+  @UseGuards(AuthGuard(), IsUserAdminGuard)
+  @ApiBearerAuth('access-token')
   @ApiResponse({ type: User, isArray: true, description: 'Returns all users in array' })
   findAll() {
     return this.userService.findAll();
   }
 
   @Get('/all/:id')
-  @ApiResponse({statusCode:200, description:'a single user retrieved'})
-  @ApiNotFoundResponse({statusCode:404, description:'a user not found'})
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('access-token')
+  @ApiResponse({status:200, description:'a single user retrieved'})
+  @ApiNotFoundResponse({status:404, description:'a user not found'})
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
- @Patch('/all/:id')
- @ApiResponse({statusCode:200, description:'a user updated successful'})
- @ApiNotFoundResponse({statusCode:404, description:'a user not found'})
- async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
+  @Patch('/all/:id')
+  @UseGuards(AuthGuard(), UserIsUserGuard)
+ @ApiBearerAuth('access-token')
+ @ApiResponse({status:200, description:'a user updated successful'})
+ @ApiNotFoundResponse({status:404, description:'a user not found'})
+ async update(@Param('id') id: string, @Body() updateUserDto: any, @Res() res: Response) {
     await this.userService.update(id, updateUserDto);
     return res.status(200).json({statusCode:200, message:"user updated successful"})
   }
 
   @Delete('/all/:id')
-  @ApiResponse({statusCode:200, description:'a user deleted successful'})
-  @ApiNotFoundResponse({statusCode:404, description:'a user not found'})
+  @UseGuards(AuthGuard(), IsUserAdminGuard)
+  @ApiBearerAuth('access-token')
+  @ApiResponse({status:200, description:'a user deleted successful'})
+  @ApiNotFoundResponse({status:404, description:'a user not found'})
   async remove(@Param('id') id: string, @Res() res: Response) {
     await this.userService.remove(id);
     return res.status(200).json({statusCode:200, message:"user deleted successful"})
@@ -79,9 +89,9 @@ export class UserController {
 
   // user login
   @Post('/login')
-  @ApiResponse({statusCode:200, description:'a user log in successful'})
-  @ApiBadRequestResponse({statusCode:400, description: 'user email is not valid, email or password is empty'})
-  @ApiUnauthorizedResponse({statusCode:401, description:'user email not found, password incorrect, user not verified'})
+  @ApiResponse({status:200, description:'a user log in successful'})
+  @ApiBadRequestResponse({status:400, description: 'user email is not valid, email or password is empty'})
+  @ApiUnauthorizedResponse({status:401, description:'user email not found, password incorrect, user not verified'})
   async userLogin(@Body() login: userLoginDto, @Res() res: Response,): Promise<any> {
     // find user exist
     const userExist = await this.userService.findByEmail(login.email);
@@ -104,9 +114,9 @@ export class UserController {
 
   // send email to request reset password
   @Post('/requestpasswordreset')
-  @ApiResponse({statusCode:200, description:'a request password reset sent successful'})
-  @ApiBadRequestResponse({statusCode:400, description: 'user email is not valid, email is empty'})
-  @ApiUnauthorizedResponse({statusCode:401, description:'user email not found'})
+  @ApiResponse({status:200, description:'a request password reset sent successful'})
+  @ApiBadRequestResponse({status:400, description: 'user email is not valid, email is empty'})
+  @ApiUnauthorizedResponse({status:401, description:'user email not found'})
  async requestPasswordReset(@Body() resetpassword: requestResetDto, @Res() res: Response): Promise<any> {
 
      const userExist = await this.userService.findByEmail(resetpassword.email);
@@ -123,9 +133,9 @@ export class UserController {
 
   // reset password
   @Patch('/:token')
-  @ApiResponse({statusCode:200, description:'a request password reset sent successful'})
-  @ApiBadRequestResponse({statusCode:400, description: 'when new and confirm password are not munch, new or confirm password are empty'})
-  @ApiUnauthorizedResponse({statusCode:401, description:'when token expired'})
+  @ApiResponse({status:200, description:'a request password reset sent successful'})
+  @ApiBadRequestResponse({status:400, description: 'when new and confirm password are not munch, new or confirm password are empty'})
+  @ApiUnauthorizedResponse({status:401, description:'when token expired'})
   async resetPassword(@Body() resetDto: resetPasswordDto, @Param('token') token, @Res() res: Response) {
     try {
      await this.userService.resetPassword(resetDto.newPassword, resetDto.confirmPassword, token)
@@ -138,8 +148,8 @@ export class UserController {
   
   // user log out
   @Post('/logout')
-  @ApiResponse({statusCode:200, description:'log out successful'})
-  @ApiBadRequestResponse({statusCode:400, description: 'log out when you already loged out'})
+  @ApiResponse({status:200, description:'log out successful'})
+  @ApiBadRequestResponse({status:400, description: 'log out when you already loged out'})
   userLogout( @Res() res: Response, @Req() req: Request){
     // check if user already log out 
     if(!req.cookies.accessToken) return res.status(400).json({statusCode:400, error:' you already loged out'})
@@ -149,9 +159,9 @@ export class UserController {
 
   // change password
   @Patch('/account/me')
-  @ApiResponse({statusCode:200, description:'a request password reset sent successful'})
-  @ApiBadRequestResponse({statusCode:400, description: 'when new and confirm password are not munch, new or confirm password are empty'})
-  @ApiUnauthorizedResponse({statusCode:401, description:'when current password are different with password in database, or when user no token provided'})
+  @ApiResponse({status:200, description:'a request password reset sent successful'})
+  @ApiBadRequestResponse({status:400, description: 'when new and confirm password are not munch, new or confirm password are empty'})
+  @ApiUnauthorizedResponse({status:401, description:'when current password are different with password in database, or when user no token provided'})
   async changePassword(@Body() resetDto: changePasswordDto, @Res() res: Response, @Req() req: Request, @Headers('authorization') headers: string ) {
   
     if(!headers) return res.status(401).json({error: 'unauthorized!, please Login'})
