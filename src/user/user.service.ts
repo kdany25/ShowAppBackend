@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable,Inject, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,7 +7,6 @@ import { v4 as uuid } from 'uuid';
 import * as SendGrid from '@sendgrid/mail';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-
 import { User } from '../user/entities/user.entity'
 
 @Injectable()
@@ -15,8 +14,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private jwtService: JwtService
-
+    private jwtService: JwtService,
   ) { }
 
   // create a new user
@@ -82,6 +80,12 @@ export class UserService {
     return await this.userRepository.update({ email }, { isVerified: true })
   }
 
+  // change user role 
+  async changeRole(id: string) {
+     return await this.userRepository.update( id , { role: "ORGANISER" })
+     
+  }
+
 
   async findAll(): Promise<User[]> {
     const users = await this.userRepository.find();
@@ -94,7 +98,7 @@ export class UserService {
   async findOne(id: string): Promise<any> {
     const singleUser = await this.userRepository.findOne({ where: { userId: id } });
     if (!singleUser) throw new NotFoundException(`user with this id ${id} not is system!`);
-    delete singleUser.password
+    delete singleUser.password    
     return singleUser;
   }
 

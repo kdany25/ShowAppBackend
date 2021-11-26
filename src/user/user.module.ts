@@ -16,7 +16,11 @@ import { PassportModule } from '@nestjs/passport';
         expiresIn: process.env.EXPIREIN,
       },
     }),
-    PassportModule,
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+      property: 'user',
+      session: false,
+    }),
   ],
   controllers: [UserController],
   providers: [UserService],
