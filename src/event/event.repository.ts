@@ -1,10 +1,11 @@
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { EntityRepository, ILike, Repository } from 'typeorm';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 
 @EntityRepository(Event)
 export class EventRepository extends Repository<Event> {
-
+  private logger=new Logger('EventRepository');
   /** Repo: search event by title
    * @param title the title 
    * @returns Events
@@ -14,6 +15,16 @@ export class EventRepository extends Repository<Event> {
     return this.find({
       where: [{ title: ILike(`%${title}%`) }],
     });
+  }
+
+   /** Repo: get event by title
+   * @param title the title 
+   * @returns Events
+   */
+  public  getByTitle(title:string){
+    return   this.findOne({
+      where:[{title}]
+    })
   }
 
    /** Repo: update event 
@@ -47,8 +58,13 @@ export class EventRepository extends Repository<Event> {
     event.regularPrice =regularPrice;
     event.isCanceled =isCanceled;
     await this.save(event);
+    try{
+      return event;
 
-    return event;
+    }catch(error){
+      this.logger.error(`Failed to update event ${event.title}`);
+      throw new InternalServerErrorException();
+    }
 }
 
  

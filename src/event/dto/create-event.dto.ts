@@ -114,4 +114,10 @@ export class QueryParamDto {
   @IsNotEmpty()
   title: string;
 }
+export class CancelEventDto{
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({type:Boolean,default:true,description:`cancel event by providing it's Id`})
+  isCanceled:boolean;
+}
 
