@@ -26,6 +26,6 @@ import { UserModule } from 'src/user/user.module';
   ],
   controllers: [EventController],
   providers: [EventService,JwtStrategy],
-  exports: [],
+  exports: [EventService],
 })
 export class EventModule {}

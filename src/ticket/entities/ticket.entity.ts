@@ -21,12 +21,12 @@ export class Ticket {
   })
   createdAt: Date;
  
-   @Column({ nullable: false , default: true })
+   @Column({ nullable: false , default: false })
   refund: boolean;
 
-  @ManyToOne((type) => Event , (ticket)=> ticket.tickets)
+  @ManyToOne((type) => Event , (event)=> event.tickets , {cascade:true} )
   event: Event;
 
-  @ManyToOne((type) => User , (ticket) => ticket.tickets)
+  @ManyToOne((type) => User , (user) => user.tickets , {cascade:true})
   user: User;
 }
