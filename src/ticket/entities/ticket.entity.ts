@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-import { type } from 'os';
 import { Event } from 'src/event/entities/event.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Column, CreateDateColumn, Entity,  ManyToOne,  PrimaryGeneratedColumn } from 'typeorm';
@@ -11,9 +9,22 @@ export class Ticket {
    
   @Column({ nullable: false })
   seatCategory: string;
+
+  @Column({nullable : false , default:1})
+  ticket_quantity  : number;
   
   @Column({ nullable: false })
   price: number;
+
+  @Column({nullable:true})
+  seat_number : string
+
+  @Column({ nullable: false , default: false })
+  refund: boolean;
+
+
+  @Column({ nullable: false , default: false })
+  used: boolean;
 
  @CreateDateColumn({
     type: 'timestamptz',
@@ -21,9 +32,6 @@ export class Ticket {
   })
   createdAt: Date;
  
-   @Column({ nullable: false , default: false })
-  refund: boolean;
-
   @ManyToOne((type) => Event , (event)=> event.tickets , {cascade:true} )
   event: Event;
 
