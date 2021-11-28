@@ -6,9 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtPayload } from 'src/shared/interfaces';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { JwtPayload } from '../shared/interfaces';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 import { ILike, Repository } from 'typeorm';
 import { CreateOrganisationDto } from './dto/create-organisation.dto';
 import { UpdateOrganisationDto } from './dto/update-organisation.dto';

@@ -1,16 +1,17 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Event } from 'src/event/entities/event.entity';
-import { EventModule } from 'src/event/event.module';
-import { Organisation } from 'src/organisation/entities/organisation.entity';
-import { OrganisationModule } from 'src/organisation/organisation.module';
-import { Ticket } from 'src/ticket/entities/ticket.entity';
-import { TicketModule } from 'src/ticket/ticket.module';
-import { User } from 'src/user/entities/user.entity';
-import { RequestRoleChange } from 'src/request-role-change/entities/request-role-change.entity';
-import { RequestRoleChangeModule } from 'src/request-role-change/request-role-change.module'
-import { UserModule } from 'src/user/user.module';
+import { Event } from '../event/entities/event.entity';
+import { EventModule } from '../event/event.module';
+import { Organisation } from '../organisation/entities/organisation.entity';
+import { OrganisationModule } from '../organisation/organisation.module';
+import { Ticket } from '../ticket/entities/ticket.entity';
+import { TicketModule } from '../ticket/ticket.module';
+import { User } from '../user/entities/user.entity';
+import { RequestRoleChange } from '../request-role-change/entities/request-role-change.entity';
+import { RequestRoleChangeModule } from '../request-role-change/request-role-change.module'
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [

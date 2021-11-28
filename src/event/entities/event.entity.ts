@@ -1,6 +1,6 @@
 import { Transform } from "class-transformer";
-import { Organisation } from "src/organisation/entities/organisation.entity";
-import { Ticket } from "src/ticket/entities/ticket.entity";
+import { Organisation } from "../../organisation/entities/organisation.entity";
+import { Ticket } from "../../ticket/entities/ticket.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 
 @Entity('events')

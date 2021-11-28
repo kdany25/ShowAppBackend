@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from '../event/entities/event.entity';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
 import { from, Observable } from 'rxjs';
 import { toDataURL } from 'qrcode';
-import { JwtPayload } from 'src/shared/interfaces';
-import { UserService } from 'src/user/user.service';
-import { EventService } from 'src/event/event.service';
+import { JwtPayload } from '../shared/interfaces';
+import { UserService } from '../user/user.service';
+import { EventService } from '../event/event.service';
 import { UpdateTicketUsedDto } from './dto/update-used-dto';
 
 

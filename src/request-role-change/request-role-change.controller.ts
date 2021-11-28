@@ -2,7 +2,7 @@ import { Controller, Get, Post, Patch, Param, Res, UseGuards } from '@nestjs/com
 import { RequestRoleChangeService } from './request-role-change.service';
 import { Response } from 'express';
 import { ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { GetUserFromRequest } from 'src/shared/decorators/user.decorator';
+import { GetUserFromRequest } from '../shared/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
 

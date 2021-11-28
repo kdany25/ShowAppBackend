@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable, Logger, NotFoundException, Unaut
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
-import { OrganisationService } from 'src/organisation/organisation.service';
-import { JwtPayload } from 'src/shared/interfaces';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { OrganisationService } from '../organisation/organisation.service';
+import { JwtPayload } from '../shared/interfaces';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';

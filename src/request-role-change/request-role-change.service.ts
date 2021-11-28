@@ -1,11 +1,11 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { RequestRoleChange } from './entities/request-role-change.entity'
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtPayload } from 'src/shared/interfaces';
+import { JwtPayload } from '../shared/interfaces';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 
 
 @Injectable()

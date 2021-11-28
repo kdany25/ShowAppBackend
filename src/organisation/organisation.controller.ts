@@ -23,9 +23,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { GetUserFromRequest } from 'src/shared/decorators/user.decorator';
+import { GetUserFromRequest } from '../shared/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 
 @ApiTags('Organisation')
 @Controller('organisation')
