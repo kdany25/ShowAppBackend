@@ -47,13 +47,23 @@ export class UserService {
 
   // email sender function
   sendConfirmationEmail(valEmail: string, token: string) {
+
+    const data = {
+      template:"d-fd14225b63a240bb8cfe14ba21cf4254", 
+    }
+
     const mailContent = {
       to: valEmail,
       subject: 'Email verification',
       from: process.env.EMAIL_SENDER,
-      html: `Hello from ShowApp, please use this <a href="${process.env.HOST}/user/verify/${token}">link</a> to verify your email`
+      templateId: data.template,
 
+      dynamic_template_data:{
+        verify_url: `www.showapp.com/user/verify/${token}`,
+      }
     }
+
+    
 
     SendGrid.setApiKey(process.env.SENDGRID_API_KEY)
     const transport = SendGrid.send(mailContent)
