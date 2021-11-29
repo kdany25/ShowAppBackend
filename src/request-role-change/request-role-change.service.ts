@@ -1,6 +1,4 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreateRequestRoleChangeDto } from './dto/create-request-role-change.dto';
-import { UpdateRequestRoleChangeDto } from './dto/update-request-role-change.dto';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { RequestRoleChange } from './entities/request-role-change.entity'
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtPayload } from 'src/shared/interfaces';
@@ -21,6 +19,7 @@ export class RequestRoleChangeService {
   // create a new request role change request
 
   async create(user: any): Promise<any> {
+    if (user.role === "ORGANISER") throw new ConflictException({status: 409, message:'you arleady have organiser as role'});
     const newRequest = { requestId: uuid(), user: user };
     await this.requestRoleChangeRepo.save(newRequest);
     return newRequest;
@@ -34,9 +33,10 @@ export class RequestRoleChangeService {
   }
 
   //approve role change and user role 
-  async updateRequest(id:string): Promise<any> {
+  async updateRequest(user:any,id:string): Promise<any> {
+    if (user.role !== "ADMIN") throw new ForbiddenException("You are not allowed to complete this action")
     await this.requestRoleChangeRepo.update( id , { isApproved: true })
-    const updatedRequest = await this.findOne(id)
+    const updatedRequest = await this.findOne(user,id);
     const userToUpdate = updatedRequest.user.userId;
     const nameToUpdate = updatedRequest.user.firstName + ' ' + updatedRequest.user.lastName;
     await this.userServices.findOne(userToUpdate)
@@ -44,12 +44,17 @@ export class RequestRoleChangeService {
     return nameToUpdate;
   }
 
-  findAll() {
-    return `This action returns all requestRoleChange`;
+  // Find all requests
+  async findAll(user: any) {
+    if (user.role !== "ADMIN") throw new ForbiddenException("You are not an admin");
+    const requests = await this.requestRoleChangeRepo.find();
+    if (requests.length <= 0) throw new NotFoundException("no new requests");
+    return requests;
   }
   
   // find one role change request
-  async findOne(id: string) {
+  async findOne(user:any,id: string) {
+    if (user.role !== "ADMIN") throw new ForbiddenException("You are not an admin");
     const singleRequest = await this.requestRoleChangeRepo.findOne({
       where: { requestId: id },
     });
@@ -66,11 +71,4 @@ export class RequestRoleChangeService {
     return singleUser;
   }
 
-  update(id: number, updateRequestRoleChangeDto: UpdateRequestRoleChangeDto) {
-    return `This action updates a #${id} requestRoleChange`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} requestRoleChange`;
-  }
 }
