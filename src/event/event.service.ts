@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -70,7 +71,9 @@ export class EventService {
    */
   findOne(id: string):Observable<Event> {
     this.logger.log(`get single event by Id ${id}`)
-    return from(this.eventRepository.findOne(id));
+    return from(this.eventRepository.findOne({
+      where:[{eventId:id},{eventCode:id}]
+    }));
   }
 
    /** Service: Update particular event 

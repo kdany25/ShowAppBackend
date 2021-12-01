@@ -71,6 +71,7 @@ export class Event {
     organisation:Organisation;
 
     @OneToMany(()=>Ticket,(ticket)=>ticket.event,{
+        onDelete:'CASCADE'
         
     })
     tickets:Ticket[];

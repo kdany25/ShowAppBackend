@@ -151,13 +151,6 @@ export class EventController {
   @ApiNotFoundResponse({description:'Invalid Id'})
   @HttpCode(HttpStatus.OK)
   public async remove(@Param('id') id: string) {
-
-    const event = await this.findOne(id);
-    
-    if (!event) {
-        this.logger.error(`event with :${id} not found`);
-        throw new NotFoundException(`Event #${event} not found`);
-    }
     this.logger.log(`remove event by ${id} with event :${event}`);
     return  await this.eventService.remove(id);
   }
