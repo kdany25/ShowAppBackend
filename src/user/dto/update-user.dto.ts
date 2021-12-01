@@ -3,56 +3,52 @@ import { IsArray, IsEmail, IsIn } from 'class-validator';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Optional } from '@nestjs/common';
 export class UpdateUserDto {
   userId: string;
-
+  @Optional()
   @ApiProperty({
     description: 'This is a user first name',
   })
-  firstName: string;
+  firstName?: string;
 
+  @Optional()
   @ApiProperty({
     description: 'This is a user last name',
   })
-  lastName: string;
+  lastName?: string;
 
+  @Optional()
   @IsEmail()
   @ApiProperty({
     description: 'This is a user email',
   })
-  email: string;
+  email?: string;
 
+  @Optional()
   @ApiProperty({
     description: 'This is a user phone number',
   })
-  phone: string;
+  phone?: string;
 
+  @Optional()
   @ApiProperty({
     description: 'This is a user date of birth',
   })
-  dOb: Date;
+  dOb?: Date;
 
+  @Optional()
   @ApiProperty({
     description: 'This is a user avatar profile',
   })
-  avatar: string;
+  avatar?: string;
 
+  @Optional()
   @IsIn(['MALE','FEMALE','OTHER'])
   @ApiProperty({
     enum: [ 'MALE','FEMALE','OTHER'],
     description: 'This is a user email',
   })
-  gender: 'MALE'|'FEMALE'|'OTHER';
+  gender?: 'MALE'|'FEMALE'|'OTHER';
 
-  @IsArray()
-  @ApiProperty({
-    description: 'This is a organizations of a user',
-  })
-  organisation:Organisation[];
-
-  @IsArray()
-  @ApiProperty({
-    description: 'Those are user tickets ',
-  })
-  tickets: Ticket[];
 }

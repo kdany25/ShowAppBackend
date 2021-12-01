@@ -72,7 +72,7 @@ export class UserController {
  @ApiBearerAuth('access-token')
  @ApiResponse({status:200, description:'a user updated successful'})
  @ApiNotFoundResponse({status:404, description:'a user not found'})
- async update(@Param('id') id: string, @Body() updateUserDto: any, @Res() res: Response) {
+ async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
     await this.userService.update(id, updateUserDto);
     return res.status(200).json({statusCode:200, message:"user updated successful"})
   }

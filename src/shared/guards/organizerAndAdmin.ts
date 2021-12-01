@@ -3,7 +3,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class IsUserAdminGuard implements CanActivate {
+export class IsUserAdminOrOrganizerGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
@@ -13,7 +13,7 @@ export class IsUserAdminGuard implements CanActivate {
 
     if (!user || !param) return false;
 
-    // find if logged in user is admin
-    return user.role === 'ADMIN';
+    // find if logged in user ORGANIZER is ADMIN
+    return (user.role === 'ADMIN' || user.role === 'ORGANISER');
   }
 }

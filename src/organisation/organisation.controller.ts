@@ -25,7 +25,7 @@ import {
 import { GetUserFromRequest } from 'src/shared/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
-import { IsUserOrganiserGuard } from 'src/shared/guards/isUserOrganiser';
+import { IsUserAdminOrOrganizerGuard } from 'src/shared/guards/organizerAndAdmin';
 
 @ApiTags('Organisation')
 @Controller('organisation')
@@ -36,7 +36,7 @@ export class OrganisationController {
 
   @Post('/create')
   @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard(),IsUserOrganiserGuard)
+  @UseGuards(AuthGuard(), IsUserAdminOrOrganizerGuard)
   @ApiCreatedResponse({
     status: 201,
     description: 'Organisation created successfully',
