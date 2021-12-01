@@ -26,6 +26,7 @@ export class CreateTicketDto {
    @IsString()
   @ApiProperty({
     description: 'this is seat number ',
+    default: '34',
     
   })
   seat_number: string

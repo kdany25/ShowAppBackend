@@ -30,7 +30,7 @@ export class UserController {
         email: createUserDto.email
       }
       const d = await this.userService.validateDate(createUserDto.dOb)
-      console.log(d);
+      
       if (!d) return res.status(400).json({ message: "Date of birth can not be in the future"})
       const token = await this.userService.genareteToken({...payload})
       const data = await this.userService.create(createUserDto)
