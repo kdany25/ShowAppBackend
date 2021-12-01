@@ -44,12 +44,12 @@ before_script:
 deploy:
   stage: deploy
   script:
-    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" $SERVER_USER@$PLACIDE_SERVER_IP:$SHOWAPP_PATH
+    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" /$CI_PROJECT_DIR/docker-compose.yml $SERVER_USER@$PLACIDE_SERVER_IP:$SHOWAPP_PATH
     - ssh $SERVER_USER@$PLACIDE_SERVER_IP "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY &&
       echo "$PLACIDE_ENV" | tr ' ' '\n' > $SHOWAPP_PATH/.env &&
       docker image rm -f $BASE_TAG_NAME:latest &&
       docker pull $BASE_TAG_NAME:latest &&
-      cd SHOWAPP_PATH &&
+      cd $SHOWAPP_PATH &&
       ls -la &&
       docker-compose -f docker-compose.yml down -v && docker-compose -f docker-compose.yml up -d"
   only:
