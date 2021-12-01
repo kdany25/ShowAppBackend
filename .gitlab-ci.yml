@@ -53,5 +53,4 @@ deploy:
     # Trigger deployments only from master branch
     - Edmond-deployment
 
-    
 
