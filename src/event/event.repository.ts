@@ -1,5 +1,5 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { EntityRepository, ILike, Repository } from 'typeorm';
+import { EntityRepository, getConnection, ILike, Repository } from 'typeorm';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 
@@ -13,7 +13,7 @@ export class EventRepository extends Repository<Event> {
 
   findByTitle(title: string) {
     return this.find({
-      where: [{ title: ILike(`%${title}%`) }],
+      where: [{ title: ILike(`%${title}%`),isDeleted:false }],
     });
   }
 
@@ -23,7 +23,7 @@ export class EventRepository extends Repository<Event> {
    */
   public  getByTitle(title:string){
     return   this.findOne({
-      where:[{title}]
+      where:[{title,isDeleted:false}]
     })
   }
 
@@ -40,7 +40,7 @@ export class EventRepository extends Repository<Event> {
     vvipAvailabelSeats,vvipPrice,vipAvailabelSeats,vipPrice,regularAvailabelSeats,regularPrice
     ,isCanceled
     } = updateEventDto;
-    const event = await this.findOne(eventId);
+    const event = await this.findOne({where:[{eventId,isDeleted:false}]});
     event.title =title;
     event.description = description;
     event.thumbnail =thumbnail;
@@ -70,7 +70,15 @@ export class EventRepository extends Repository<Event> {
  
  public async deleteEvent(eventId:string):Promise<void>{
     const event = await this.findOne(eventId);
-    await this.remove(event);
+    if(!event.isDeleted){
+      
+      await getConnection()
+      .createQueryBuilder()
+      .update(Event)
+      .set({isDeleted:true})
+      .where("eventId= :eventId",{eventId})
+      .execute();
+    }
 
   }
 
@@ -79,7 +87,7 @@ export class EventRepository extends Repository<Event> {
     updateEventDto: UpdateEventDto,
 ): Promise<Event> {
     const { isCanceled } = updateEventDto;
-    const event = await this.findOne(eventId);
+    const event = await this.findOne({where:[{eventId,isDeleted:false}]});
     event.isCanceled = isCanceled;
     
     await this.save(event);

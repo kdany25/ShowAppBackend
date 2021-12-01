@@ -78,6 +78,11 @@ export class CreateEventDto {
 })
   eventCategory: string;
 
+  @IsIn(['HAPPENING,ENDED,STARTED'],{message:'event status must be one of HAPPENING,ENDED,STARTED'})
+  @IsOptional()
+  @ApiProperty({type:String,enum:['HAPPENING','ENDED','STARTED'],default:'STARTED'})
+  status:string;
+
   @IsOptional()
   @IsNumber()
   @ApiProperty({type:Number,description:'event vvip available seats',default:'12'})

@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable, Logger, NotFoundException, Unaut
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
-import { OrganisationService } from 'src/organisation/organisation.service';
-import { JwtPayload } from 'src/shared/interfaces';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { OrganisationService } from '../organisation/organisation.service';
+import { JwtPayload } from '../shared/interfaces';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
@@ -39,7 +39,8 @@ export class EventService {
 
     if(!organisation) throw new NotFoundException('organisation not found');
       this.logger.log(`event is created `);
-     return await this.eventRepository.save({...createEventDto,organisation});
+      const eventCode=this.randomString();
+     return await this.eventRepository.save({...createEventDto,eventCode,organisation});
     
   }
 
@@ -49,7 +50,7 @@ export class EventService {
    */
   public async findAll(): Promise<Event[]> {
     this.logger.log(`retrieve all events`);
-    return await this.eventRepository.find({});
+    return await this.eventRepository.find({where:[{isDeleted:false}]});
   }
   
   /** Service: search  an event by title
@@ -161,5 +162,19 @@ export class EventService {
     return true;
 
   }
+  private  randomString():string {
+
+		const characters= '0123456789';
+		let str = "";
+		 const createdEmplCode="EV";
+		const mynewCharacters = characters.split('');
+		const generatedCodeLength =4;
+		for (let i = 0; i < generatedCodeLength; i++) {
+		    const index:number = (Math.random() *10);
+		    const newString:string = characters.substring(index, characters.length - 1);
+		    str += mynewCharacters[newString.length];
+		}
+		return createdEmplCode.concat(str);
+	    }
 
 }

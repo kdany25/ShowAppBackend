@@ -5,11 +5,11 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { UpdateTicketUsedDto } from './dto/update-used-dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { GetUserFromRequests } from 'src/shared/decorators/user.decorator';
-import { GetUserFromRequest } from 'src/shared/decorators/user.decorator';
+import { GetUserFromRequests } from '../shared/decorators/user.decorator';
+import { GetUserFromRequest } from '../shared/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtPayload } from 'src/shared/interfaces';
-import { EventService } from 'src/event/event.service';
+import { JwtPayload } from '../shared/interfaces';
+import { EventService } from '../event/event.service';
 
 @ApiTags('Ticket')
 @Controller('/ticket')

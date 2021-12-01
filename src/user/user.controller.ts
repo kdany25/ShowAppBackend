@@ -11,8 +11,8 @@ import { changePasswordDto } from './dto/changePassword.dto';
 import { ApiAcceptedResponse, ApiResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse, ApiBadRequestResponse, ApiBearerAuth, } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { IsUserAdminGuard } from 'src/shared/guards/isUserAdmin';
-import { UserIsUserGuard } from 'src/shared/guards/UserIsLogedIn';
+import { IsUserAdminGuard } from '../shared/guards/isUserAdmin';
+import { UserIsUserGuard } from '../shared/guards/UserIsLogedIn';
 
 @ApiTags('User CRUD')
 @Controller('/user')

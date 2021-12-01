@@ -4,7 +4,7 @@ import { CancelEventDto, CreateEventDto} from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ApiAcceptedResponse, ApiBearerAuth, ApiBody, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse,  } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUserFromRequest } from 'src/shared/decorators/user.decorator';
+import { GetUserFromRequest } from '../shared/decorators/user.decorator';
 @Controller('event')
 @ApiTags('Event')
 export class EventController {

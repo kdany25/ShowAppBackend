@@ -1,7 +1,6 @@
-/* eslint-disable prettier/prettier */
-import { Organisation } from 'src/organisation/entities/organisation.entity';
+import { Organisation } from '../../organisation/entities/organisation.entity';
 import { RequestRoleChange } from 'src/request-role-change/entities/request-role-change.entity';
-import { Ticket } from 'src/ticket/entities/ticket.entity';
+import { Ticket } from '../../ticket/entities/ticket.entity';
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('users')
 export class User {

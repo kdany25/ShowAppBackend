@@ -4,10 +4,10 @@ import { EventController } from './event.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventRepository } from './event.repository';
 import { JwtModule } from '@nestjs/jwt';
-import { OrganisationModule } from 'src/organisation/organisation.module';
+import { OrganisationModule } from '../organisation/organisation.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from 'src/organisation/strategies/jwt.strategy';
-import { UserModule } from 'src/user/user.module';
+import { JwtStrategy } from '../organisation/strategies/jwt.strategy';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EventRepository]),
