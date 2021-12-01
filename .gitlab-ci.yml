@@ -12,18 +12,18 @@ services:
 
 stages:
   - build
-  # - deploy
 
 variables:
   BASE_TAG_NAME: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
 
-stage: build
-script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  - docker build -t $BASE_TAG_NAME:latest .
-  - docker push  $BASE_TAG_NAME:latest
-only:
-  - placideh_deployment
+build:
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $BASE_TAG_NAME:latest .
+    - docker push  $BASE_TAG_NAME:latest
+  only:
+    - placideh_deployment
 
 # before_script:
 #   # Check for ssh-agent + rsync and install if not present
