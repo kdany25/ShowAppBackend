@@ -52,3 +52,4 @@ deploy:
   only:
     # Trigger deployments only from master branch
     - Edmond-deployment
+    
