@@ -12,6 +12,7 @@ services:
 
 stages:
   - build
+  - deploy
 
 variables:
   BASE_TAG_NAME: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
@@ -25,27 +26,30 @@ build:
   only:
     - placideh_deployment
 
-# before_script:
-#   # Check for ssh-agent + rsync and install if not present
-#   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y  )'
-#   - 'which rsync || ( apt-get update -y && apt-get install rsync -y )'
-#   - eval $(ssh-agent -s)
-#   # Inject the remote's private key
-#   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-#   - mkdir -p ~/.ssh
-#   - chmod 700 ~/.ssh
-#   # Append keyscan output into known hosts
-#   - ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
-#   - chmod 644 ~/.ssh/known_hosts
-#   - npm install
-#   - npm run build
+before_script:
+  # Check for ssh-agent + rsync and install if not present
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y  )'
+  - 'which rsync || ( apt-get update -y && apt-get install rsync -y )'
+  - eval $(ssh-agent -s)
+  # Inject the remote's private key
+  - echo "$PLACIDE_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  # Append keyscan output into known hosts
+  - ssh-keyscan $PLACIDE_SERVER_IP >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - npm install
+  - npm run build
 
-# deploy:
-#   stage: deploy
-#   script:
-#     - rsync -avuz --exclude=".*" $CI_PROJECT_DIR $SERVER_USER@$SERVER_IP:~
-#     # Non interactive ssh gracefully reloads server
-#     - ssh $SERVER_USER@$SERVER_IP '. /etc/profile; pm2 reload all'
-#   only:
-#     # Trigger deployments only from master branch
-#     - master
+deploy:
+  stage: deploy
+  script:
+    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" $SERVER_USER@$PLACIDE_SERVER_IP:~
+    - ssh $SERVER_USER@$PLACIDE_SERVER_IP "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY &&
+      echo "$ENV_VARS" | tr ' ' '\n' > $DEV_SERVER_PATH/.env &&
+      docker image rm -f $BASE_TAG_NAME:latest &&
+      docker pull $BASE_TAG_NAME:latest &&
+      docker-compose -f docker-compose.yml down -v && docker-compose -f docker-compose.yml up -d"
+  only:
+    # Trigger deployments only from master branch
+    - placideh_deployment
