@@ -50,5 +50,5 @@ deploy:
       docker pull $BASE_TAG_NAME:latest &&
       docker-compose -f docker-compose.yml down -v && docker-compose -f docker-compose.yml up -d"
   only:
-    # Trigger deployments only from master branch
-    - ami_deploy
+    # Trigger deployments only from my branch
+    - ami-deployment
