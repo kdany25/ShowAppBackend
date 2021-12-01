@@ -48,6 +48,7 @@ deploy:
       echo "$PLACIDE_ENV" | tr ' ' '\n' > .env &&
       docker image rm -f $BASE_TAG_NAME:latest &&
       docker pull $BASE_TAG_NAME:latest &&
+      ls -la &&
       docker-compose -f docker-compose.yml down -v && docker-compose -f docker-compose.yml up -d"
   only:
     # Trigger deployments only from master branch
