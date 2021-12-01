@@ -28,8 +28,8 @@ build:
 
 before_script:
   # Check for ssh-agent + rsync and install if not present
-  - 'which ssh-agent || ( apk update -y && apk add openssh-client -y  )'
-  - 'which rsync || ( apk update -y && apk add rsync -y )'
+  - 'which ssh-agent || ( apk update && apk add openssh-client  )'
+  - 'which rsync || ( apk update && apk add rsync )'
   - eval $(ssh-agent -s)
   # Inject the remote's private key
   - echo "$PLACIDE_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
