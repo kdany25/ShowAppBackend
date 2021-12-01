@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  
+
+  api:
+    container_name: showapp-apii
+    environment :  
+         DATABASE_URL: postgres://postgres:kabalisa12@postgres:5433/trial
+         
+    volumes:
+        - ./:/app  
+    depends_on:
+        - postgres
+                
+        
+        
+    build:
+        context: .
+        dockerfile: ./Dockerfile.dev
+    ports: 
+       - '3000:3000'
+
+      
+    restart: on-failure       
+    
+
+  postgres :
+      container_name : showapp_postgresql
+      image : postgres
+      restart : always
+
+      ports:
+        - "35000:5433"
+      
+      environment:
+           
+           POSTGRES_USER : postgres
+           POSTGRES_PASSWORD : kabalisa12
+           POSTGRES_DATABASE : trial
+      volumes:
+           - ./postgres:/var/lib/postgresql     
+           
+           
+ 
+
+  
+         
+
+
+

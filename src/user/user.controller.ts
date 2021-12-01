@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Headers, Delete, Res, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -153,7 +154,7 @@ export class UserController {
   userLogout( @Res() res: Response, @Req() req: Request){
     // check if user already log out 
     if(!req.cookies.accessToken) return res.status(400).json({statusCode:400, error:' you already loged out'})
-    res.clearCookie('accessToken','/')
+    res.clearCookie('accessToken')
     return res.status(200).json({statusCode:200, message:'Log out successful!'})
   }
 
