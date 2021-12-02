@@ -144,8 +144,9 @@ export class UserService {
   async findByEmail(email: string): Promise<User> {
    const user = await this.userRepository.findOne({where:{email:email}});
    if(!user) throw new UnauthorizedException ({statusCode: 401, error: `You don't have account with this email: ${email}!`});
+   if(user.status !== 'active') throw new UnauthorizedException ({statusCode: 401, error: `You don't have account with this email: ${email}!`});
    if(!user.isVerified) throw new UnauthorizedException ({statusCode: 401, error: `Please verify your account first!`});
-
+   
     return user;
   }
 
@@ -156,7 +157,7 @@ export class UserService {
 
   async remove(id: string) {
     await this.findOne(id)
-    return await this.userRepository.delete(id);
+    return await this.userRepository.update(id, { status: 'deleted' });
   }
 
   sendEmail(userEmail: string, token: string) {
