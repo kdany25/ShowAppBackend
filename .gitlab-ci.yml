@@ -44,7 +44,7 @@ before_script:
 deploy:
   stage: deploy
   script:
-    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" /$CI_PROJECT_DIR/docker-compose.yml $SERVER_USER@$EDMOND_SERVER_IP:$SHOWAPP_PATH
+    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" /$CI_PROJECT_DIR $SERVER_USER@$EDMOND_SERVER_IP:$SHOWAPP_PATH
     - ssh $SERVER_USER@$EDMOND_SERVER_IP "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY &&
       echo "$EDMOND_ENV" | tr ' ' '\n' > $SHOWAPP_PATH/.env &&
       docker image rm -f $BASE_TAG_NAME:latest &&
