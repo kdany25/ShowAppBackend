@@ -1,54 +1,30 @@
 /* eslint-disable prettier/prettier */
-import { IsArray, IsEmail, IsIn } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { IsArray, IsEmail, IsIn, IsOptional } from 'class-validator';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Optional } from '@nestjs/common';
-export class UpdateUserDto {
+import { CreateUserDto } from './create-user.dto';
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {
   userId: string;
-  @Optional()
-  @ApiProperty({
-    description: 'This is a user first name',
-  })
+  @IsOptional()
   firstName?: string;
 
-  @Optional()
-  @ApiProperty({
-    description: 'This is a user last name',
-  })
+  @IsOptional()
   lastName?: string;
 
-  @Optional()
-  @IsEmail()
-  @ApiProperty({
-    description: 'This is a user email',
-  })
-  email?: string;
-
-  @Optional()
-  @ApiProperty({
-    description: 'This is a user phone number',
-  })
+  @IsOptional()
   phone?: string;
 
-  @Optional()
-  @ApiProperty({
-    description: 'This is a user date of birth',
-  })
+  @IsOptional()
   dOb?: Date;
 
-  @Optional()
-  @ApiProperty({
-    description: 'This is a user avatar profile',
-  })
+  @IsOptional()
   avatar?: string;
 
-  @Optional()
+  @IsOptional()
   @IsIn(['MALE','FEMALE','OTHER'])
-  @ApiProperty({
-    enum: [ 'MALE','FEMALE','OTHER'],
-    description: 'This is a user email',
-  })
   gender?: 'MALE'|'FEMALE'|'OTHER';
 
 }
