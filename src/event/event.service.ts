@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, HttpStatus, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
+import { Organisation } from '../organisation/entities/organisation.entity';
 import { OrganisationService } from '../organisation/organisation.service';
 import { JwtPayload } from '../shared/interfaces';
 import { User } from '../user/entities/user.entity';
@@ -50,6 +51,10 @@ export class EventService {
    * @returns Observable<[createEventDto:CreateEventDto ]>
    */
   public async findAll(): Promise<Event[]> {
+    // let user=new User();
+    // user=await this.userService.findOne(userRequest);
+    // console.log("user from findall:");
+    // if(user.role==='ADMIN') return await this.eventRepository.find();
     this.logger.log(`retrieve all events`);
     return await this.eventRepository.find({where:[{isDeleted:false}]});
   }
@@ -82,7 +87,12 @@ export class EventService {
    * @returns Promise<{event:Event}>
    */
   public async update(id: string, updateEventDto: UpdateEventDto):Promise<Event> {
-        const event= await this.eventRepository.findOne(id)
+        let user=new User();
+        const event=await this.eventRepository.findOne(id);
+        const userId=event.organisation.user.userId;
+        user=await this.userService.findOne(userId);
+        
+        if((user.role!=='ORGANISER'||'ADMIN')  &&user.userId!=event.organisation.user.userId)throw new ForbiddenException('Unmatch role for update')
         if(!event) throw new NotFoundException ('event not found ');
         this.validateEvent(updateEventDto);
         this.logger.log(`update event with id :${id} and updated Event ${updateEventDto} :`)

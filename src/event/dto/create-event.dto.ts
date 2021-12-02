@@ -78,7 +78,7 @@ export class CreateEventDto {
 })
   eventCategory: string;
 
-  @IsIn(['HAPPENING,ENDED,STARTED'],{message:'event status must be one of HAPPENING,ENDED,STARTED'})
+  @IsIn(['HAPPENING','ENDED','STARTED'],{message:'event status must be one of HAPPENING,ENDED,STARTED'})
   @IsOptional()
   @ApiProperty({type:String,enum:['HAPPENING','ENDED','STARTED'],default:'STARTED'})
   status:string;
