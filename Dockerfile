@@ -1,7 +1,7 @@
 # specify the node base image with your desired version node:<version>
 FROM node:16-alpine3.12
 
-WORKDIR /app
+WORKDIR ./
 
 COPY package.json package-lock.json* ./
 
