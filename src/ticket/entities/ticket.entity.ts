@@ -26,7 +26,7 @@ export class Ticket {
   @Column({ nullable: false , default: false })
   used: boolean;
 
- @CreateDateColumn({
+  @CreateDateColumn({
     type: 'timestamptz',
     default: 'NOW()',
   })

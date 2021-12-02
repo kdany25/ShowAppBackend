@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Delete ,UseGuards} from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -10,25 +11,32 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtPayload } from 'src/shared/interfaces';
 import { EventService } from 'src/event/event.service';
 
-
 @ApiTags('Ticket')
 @Controller('/ticket')
+
 export class TicketController {
   //constructor
-constructor(private readonly ticketService: TicketService ,
-private readonly eventService : EventService) {}
+  constructor(private readonly ticketService: TicketService ,
+  private readonly eventService : EventService) {}
 
-//creating ticket
-@Post(':id')
-@UseGuards(AuthGuard())
-@ApiBearerAuth('access-token')
-@ApiResponse({ status: 201, description: 'Ticket Created' })
-@ApiResponse({ status: 404, description: 'Not found' })
-async create(@Body() createTicketDto: CreateTicketDto,
-@GetUserFromRequests() user,
-@Param('id')eventId:string) {
-  return await this.ticketService.create(createTicketDto,eventId,user);
-  }
+  //creating ticket
+  @Post(':id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('access-token')
+  @ApiResponse({ status: 201, description: 'Ticket Created' })
+  @ApiResponse({ status: 404, description: 'Not found' })
+  async create(@Body() createTicketDto: CreateTicketDto,
+  @GetUserFromRequests() user,
+  @Param('id')eventId:string) {
+  const ticket=  await this.ticketService.create(createTicketDto,eventId,user);
+  this.ticketService.sendTicketMail(user.email,
+    createTicketDto.seatCategory,
+    createTicketDto.price,
+    createTicketDto.seat_number,
+    user.firstName ,
+    user.lastName)
+    return ticket;
+}
 
   //Get all ticket
   @Get()
@@ -36,19 +44,20 @@ async create(@Body() createTicketDto: CreateTicketDto,
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 200, description: 'fetch all ticket' })
   findAll(@GetUserFromRequest() user:JwtPayload ) {
-    if(user.role == 'ORGANISER'){
-     return this.ticketService.findAll();
-    }else{
+  if(user.role){
+   return this.ticketService.findAll();
+  }else{
       return ' unauthorised access' ;
-    }
-    }
+  }
+  }
+
   //Get ticket by Id  
   @Get(':id')
   @UseGuards(AuthGuard())
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 200, description: 'fetch ticket by Id' })
   findOne(@Param('id') id: string , @GetUserFromRequest('userId') user:JwtPayload) {
-    return this.ticketService.findOne(id);
+   return this.ticketService.findOne(id);
   }
 
   //Update ticket 
@@ -57,7 +66,7 @@ async create(@Body() createTicketDto: CreateTicketDto,
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 201, description: 'ticket Refunded' })
   update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
-    return this.ticketService.update(id, updateTicketDto);
+   return this.ticketService.update(id, updateTicketDto);
   }
 
   //delete Ticket
@@ -66,26 +75,26 @@ async create(@Body() createTicketDto: CreateTicketDto,
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 201, description: 'ticket deleted' })
   remove(@Param('id') id: string) {
-    return this.ticketService.remove(+id);
+   return this.ticketService.remove(+id);
   }
   
   //Generate Qrcode
- @Get('qr/:id')
- @UseGuards(AuthGuard())
- @ApiBearerAuth('access-token')
- @ApiResponse({ status: 200, description: 'QR generated' })
- async generate(@Param('id') id: string) {
-    return this.ticketService.generate(id)
+  @Get('qr/:id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('access-token')
+  @ApiResponse({ status: 200, description: 'QR generated' })
+  async generate(@Param('id') id: string) {
+   return this.ticketService.generate(id)
   }
 
   //checking if ticket is not used
- @Patch('check/:id')
- @UseGuards(AuthGuard())
- @ApiBearerAuth('access-token')
- @ApiResponse({ status: 200, description: 'ticket checking' })
- @ApiResponse({ status: 404, description: 'Not found' })
- check(@Param('id') id: string, @Body() updateTicketusedDto: UpdateTicketUsedDto) {
-    return this.ticketService.check(id ,updateTicketusedDto);
+  @Patch('check/:id')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth('access-token')
+  @ApiResponse({ status: 200, description: 'ticket checking' })
+  @ApiResponse({ status: 404, description: 'Not found' })
+  check(@Param('id') id: string, @Body() updateTicketusedDto: UpdateTicketUsedDto) {
+   return this.ticketService.check(id ,updateTicketusedDto);
   }
   
 }

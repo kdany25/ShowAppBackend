@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { HttpException,
+         HttpStatus,
+         Injectable,
+         UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from '../event/entities/event.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -12,6 +16,7 @@ import { JwtPayload } from 'src/shared/interfaces';
 import { UserService } from 'src/user/user.service';
 import { EventService } from 'src/event/event.service';
 import { UpdateTicketUsedDto } from './dto/update-used-dto';
+import * as SendGrid from '@sendgrid/mail';
 
 
 @Injectable()
@@ -26,33 +31,34 @@ private userServices:UserService , private eventservice :EventService){}
   //create ticket
   public async create(createTicketDto: CreateTicketDto, eventId:string ,user)  {
   try {
-   const dt = createTicketDto;
-   dt.price = dt.price* dt.ticket_quantity
-   return await this.ticketrepo.save({...dt,eventId,user})
-    } catch (error) {
-   throw new HttpException(error,HttpStatus.BAD_REQUEST)
+  const dt = createTicketDto;
+  dt.price = dt.price* dt.ticket_quantity
+  const tic = await this.ticketrepo.save({...dt,eventId,user})
+  return tic
+       }
+  catch (error) {
+  throw new HttpException(error,HttpStatus.BAD_REQUEST)
   }
   }
-   
+
   //Get all ticket
   findAll(): Observable<Ticket[]>{
   return from (this.ticketrepo.find());
   }
 
-
   //Get ticket By Id
   findOne(id: string) : Observable<Ticket> {
-    return from (this.ticketrepo.findOne(id));
+  return from (this.ticketrepo.findOne(id));
   }
  
   //Update Ticket details
   update(id: string, updateTicketDto: UpdateTicketDto) {
-    return from(this.ticketrepo.update(id,updateTicketDto));
+  return from(this.ticketrepo.update(id,updateTicketDto));
   }
   
   //delete ticket
   remove(id: number )  {
-    return `This action removes a #${id} ticket`;
+  return `This action removes a #${id} ticket`;
   }
 
   //Generate QRCode for ticket
@@ -67,7 +73,7 @@ private userServices:UserService , private eventservice :EventService){}
       
     }
     }
-   //Checking ticket if is valid 
+  //Checking ticket if is valid 
   async check (id : string , updateTicketUsedDto: UpdateTicketUsedDto){
     
     try {
@@ -83,9 +89,34 @@ private userServices:UserService , private eventservice :EventService){}
 
   // validate user 
   async validateUser(payload: JwtPayload): Promise<User> {
-  const user = await this.userServices.findOne(payload.userId);
-  if (!user) throw new UnauthorizedException('Invalid token');
+   const user = await this.userServices.findOne(payload.userId);
+   if (!user) throw new UnauthorizedException('Invalid token');
     return user;
   }
 
-  }
+  // email sender function
+  sendTicketMail(userEmail: string , seatC : string , price : number , seatN : string ,fName:string ,sName:string ) {
+  const data = {
+      template:"d-d62e8fc27ce4463f80ed4b795b21cfa9", 
+                 }
+  const mailContent = {
+      to: userEmail,
+      from: process.env.EMAIL_SENDER,
+      templateId: data.template,
+      dynamic_template_data:{
+        preheader : 'hello from ShowApp',
+        subject: 'ticket details',
+        name: fName,
+        surname : sName,
+        userEmail : userEmail,
+        seat_Category: seatC,
+        price: price,
+        Seat_Number: seatN,
+      }
+    }
+
+  SendGrid.setApiKey(process.env.SENDGRID_API_KEY)
+  const transport = SendGrid.send(mailContent)
+  return transport
+      }
+     }
