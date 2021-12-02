@@ -28,7 +28,7 @@ deploy-stage:
   stage: deploy-stage
   image: alpine:latest
   script:
-    - chmod og= $STAGE_ID_RSA
+    - chmod og= $PLACIDE_PRIVATE_KEY
     - apk update && apk add openssh-client
     # stop existing docker container & remove images
     - ssh -i $PLACIDE_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$PLACIDE_SERVER_IP "docker stop $CI_PROJECT_NAME || true"
