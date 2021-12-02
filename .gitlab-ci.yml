@@ -16,7 +16,7 @@ stages:
 
 variables:
   BASE_TAG_NAME: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
-  SHOWAPP_PATH: /root/showapp
+  SHOWAPP_PATH: /root/showapp/
 
 build:
   stage: build
@@ -52,9 +52,6 @@ deploy:
       cd $SHOWAPP_PATH &&
       ls -la &&
       docker-compose -f docker-compose.yml down -v && docker-compose -f docker-compose.yml up -d"
-    - sudo docker-compose -f docker-compose.yml build --no-cache
-    - sudo docker-compose -f docker-compose.yml up -d
-
   only:
     # Trigger deployments only from master branch
     - placideh_deployment
