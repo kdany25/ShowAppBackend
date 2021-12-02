@@ -47,13 +47,28 @@ export class UserService {
 
   // email sender function
   sendConfirmationEmail(valEmail: string, token: string) {
+
+    const data = {
+      template:"d-fd14225b63a240bb8cfe14ba21cf4254", 
+    }
+
     const mailContent = {
       to: valEmail,
-      subject: 'Email verification',
+      //subject: 'Email verification',
       from: process.env.EMAIL_SENDER,
-      html: `Hello from ShowApp, please use this <a href="${process.env.HOST}/user/verify/${token}">link</a> to verify your email`
+      templateId: data.template,
 
+      dynamic_template_data:{
+        verify_url: `${process.env.HOST}/user/verify/${token}`,
+        header: "Hello from ShowApp!!",
+        body: "Please verify your email address to get access to thousands of exclusive events",
+        button_text:"Click here to verify",
+        subject: "ShowApp email verification",
+        preheader:"Please verify your email"
+      }
     }
+
+    
 
     SendGrid.setApiKey(process.env.SENDGRID_API_KEY)
     const transport = SendGrid.send(mailContent)
@@ -145,11 +160,28 @@ export class UserService {
   }
 
   sendEmail(userEmail: string, token: string) {
+
+    const data = {
+      template: "d-fd14225b63a240bb8cfe14ba21cf4254",
+    }
+
     const mail = {
       to: userEmail,
       subject: 'Reset password',
       from: process.env.EMAIL_SENDER,
-      html: `Click here to reset your password <a href= "${process.env.HOST}/user/${token}">click here</a>`
+      html: `Click here to reset your password <a href= "${process.env.HOST}/user/${token}">click here</a>`,
+      templateId: data.template,
+
+
+      dynamic_template_data: {
+        verify_url: `${process.env.HOST}/user/reset/${token}`,
+        header: "Hello from ShowApp!!",
+        body: "Have you requested to reset your password?use the link below, if it was not you ignore this email",
+        button_text: "Reset your password",
+        subject: "ShowApp reset password",
+        preheader: "Reset your password"
+      }
+
     }
 
     SendGrid.setApiKey(process.env.SENDGRID_API_KEY);

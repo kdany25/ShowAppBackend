@@ -1,73 +1,59 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# ShowApp back end application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a Nest js backend application for ShowApp, an event management platform where organisers can post their <br />
+upcoming events and attendees can browse through them & choose what they want to attend
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### Goal of Application
 
-## Description
+This application was developed as a graduation project by members of Task Force 4.0 team 2 
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# **Technologies used**
 
-## Installation
+- Environment : [Nodejs](https://nodejs.org/)
+- Framework : [Nestjs](https://nestjs.com/)
+- Package Manager : [NPM](https://www.npmjs.com)
+- Object-relational mapping (ORM) : [typeORM](https://typeorm.io/#/)
+- Database : [postgresql](https://www.postgresql.org/)
+- Documentation : [Swagger](https://swagger.io/)
 
-```bash
-$ npm install
-```
 
-## Running the app
+# **Requirements and Installation steps**
 
-```bash
-# development
-$ npm run start
+## **You need the following to be able to run the application**
 
-# watch mode
-$ npm run start:dev
+[Node](https://nodejs.org/en/download/) a runtime environment for JavaScript.
 
-# production mode
-$ npm run start:prod
-```
+[npm](https://www.npmjs.com/get-npm) as a package manager for the JavaScript programming language.
 
-## Test
+[Visual studio code](https://code.visualstudio.com/download) for editing and running the app.
 
-```bash
-# unit tests
-$ npm run test
+## **Clone the project**
+    - open the terminal
+    - run git clone https://gitlab.com/tas11/showapp.git
+    - run cd showapp
+    - run npm install (to install required dependencies)
+    - use .env.sample.md as reference to set environment variables
 
-# e2e tests
-$ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
-```
+## Available Scripts
 
-## Support
+In the project directory, you can run:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### `npm install`
 
-## Stay in touch
+For install dependencies
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### `npm run start:dev`
 
-## License
+Starts the server  in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser or test endpoints with postman.
 
-Nest is [MIT licensed](LICENSE).
+
+### API Documentation
+
+Open [http://localhost:3000/api/#/](http://localhost:3000/api/#/) after starting the server to view API documentation with Swagger.
+
+
+# **Author**
+
+## **Task Force 4.0 Team 2**
