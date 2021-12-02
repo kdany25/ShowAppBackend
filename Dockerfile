@@ -29,6 +29,6 @@ CMD echo "POSTGRES_PORT=${POSTGRES_PORT}" > .env \
   && echo "POSTGRES_USER=${POSTGRES_USER}" >> .env \
   && echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env \
   && echo "POSTGRES_DB=${POSTGRES_DB}" >> .env \
-  && npm start:dev
+  && npm run start:dev
 
 
