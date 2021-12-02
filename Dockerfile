@@ -1,9 +1,9 @@
 # specify the node base image with your desired version node:<version>
 FROM node:16-alpine3.12
 
-WORKDIR .
+WORKDIR ./
 
-COPY package.json package-lock.json* .
+COPY package.json package-lock.json* ./
 
 RUN npm install
 
