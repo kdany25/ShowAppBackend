@@ -50,7 +50,7 @@ deploy:
       docker image rm -f $BASE_TAG_NAME:latest &&
       docker pull $BASE_TAG_NAME:latest &&
       cd $SHOWAPP_PATH &&
-      docker-compose docker-compose down -v && docker-compose docker-compose up -d"
+      docker-compose down -v && docker-compose up -d"
   only:
     # Trigger deployments only from master branch
     - edmond-deployment
