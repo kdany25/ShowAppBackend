@@ -16,6 +16,7 @@ stages:
 
 variables:
   BASE_TAG_NAME: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG
+  SHOWAPP_PATH: /root/showapp/
 
 build:
   stage: build
@@ -43,13 +44,12 @@ before_script:
 deploy:
   stage: deploy
   script:
-    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" $SERVER_USER@$EDMOND_SERVER_IP:~
+    - rsync --rsync-path=/usr/bin/rsync --delete -avuz --exclude=".*" $SERVER_USER@$EDMOND_SERVER_IP:$SHOWAPP_PATH~
     - ssh $SERVER_USER@$EDMOND_SERVER_IP "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY &&
-      echo "$EDMOND_ENV" | tr ' ' '\n' > .env &&
+      echo "$EDMOND_ENV" | tr ' ' '\n' > $SHOWAPP_PATH.env &&
       docker image rm -f $BASE_TAG_NAME:latest &&
       docker pull $BASE_TAG_NAME:latest &&
       docker-compose -f docker-compose.yml down -v && docker-compose -f docker-compose.yml up -d"
   only:
     # Trigger deployments only from master branch
     - edmond-deployment
-    
