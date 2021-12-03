@@ -6,11 +6,11 @@ import { GetUserFromRequest } from '../shared/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
 
-@ApiTags(" Request Role change CRUD operations ")
+@ApiTags("Request Role change CRUD operations ")
 @Controller('request-role-change')
 export class RequestRoleChangeController {
   constructor(private readonly requestRoleChangeService: RequestRoleChangeService) {}
-
+  @ApiTags('x-user-journey')
   @ApiCreatedResponse({ status: 201, description: 'Request succesfully sent' })
   @ApiConflictResponse({status:409, description: 'You are already an organizer'})
   @ApiBearerAuth('access-token')
@@ -50,11 +50,11 @@ export class RequestRoleChangeController {
     }
   }
 
-
+  @ApiTags('x-user-journey')
   @ApiOkResponse({ status: 202, description: 'Request succesfully approved' })
   @ApiForbiddenResponse({ status: 403, description: 'You are allowed to perform this action' })
   @ApiBearerAuth('access-token')
-  @Patch(':id')
+  @Patch('approve/:id')
   @UseGuards(AuthGuard())
   async aproveRoleChange(@Param('id') id: string, @Res() res: Response,@GetUserFromRequest() user:any) {    
     try {

@@ -21,5 +21,8 @@ export const config = new DocumentBuilder()
 export const customOptions: SwaggerCustomOptions = {
   swaggerOptions: {
     persistAuthorization: true,
+    tagsSorter:'alpha',
+    // apisSorter:'alpha',
+    // sorter:"alpha"
   },
 };

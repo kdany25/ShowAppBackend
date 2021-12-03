@@ -18,7 +18,7 @@ import { UserIsUserGuard } from '../shared/guards/UserIsLogedIn';
 @Controller('/user')
 export class UserController {
   constructor( private readonly userService: UserService) { }
-
+  @ApiTags('x-user-journey')
   @ApiCreatedResponse({ status: 201, description:'User succesfully created'})
   @ApiBody({type:CreateUserDto})
   @Post()
@@ -41,6 +41,7 @@ export class UserController {
     }
   }
 
+  @ApiTags('x-user-journey')
   @ApiAcceptedResponse({ status:202,description:"User successfully verified"})
   @ApiForbiddenResponse({ status: 403, description: "Invalid or invalid token" })
   @ApiNotFoundResponse({ status:404, description: "User not found" })
@@ -93,6 +94,7 @@ export class UserController {
   }
 
   // user login
+  @ApiTags('x-user-journey')
   @Post('/login')
   @ApiResponse({status:200, description:'a user log in successful'})
   @ApiBadRequestResponse({status:400, description: 'user email is not valid, email or password is empty'})
