@@ -31,6 +31,9 @@ export class User {
     @Column({nullable : false,default:"active"})
     status? : string;
 
+    @Column({nullable : true,default:null})
+    resetPasswordToken? : string;
+
     @Column({nullable : false})
     dOb : Date;
 

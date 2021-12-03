@@ -12,8 +12,7 @@ export class IsUserAdminGuard implements CanActivate {
     const user = request.user;
 
     if (!user || !param) return false;
-
     // find if logged in user is admin
-    return user.role === 'ADMIN';
+    return user.role === 'ADMIN'
   }
 }
