@@ -36,7 +36,7 @@ export class Event {
     @Column({nullable:false})
     isPublished:boolean;
 
-    @Column({nullable:true,default:'STARTED'})
+    @Column({nullable:true,default:'PENDING'})
     status:string;
 
     @Column({nullable:true,default:false})
@@ -66,7 +66,7 @@ export class Event {
     @Column({nullable:true})
     isCanceled:boolean;
 
-    @ManyToOne(()=>Organisation,(organisation)=>organisation.events,{
+    @ManyToOne(()=>Organisation,(organisation)=>organisation.events,{ eager:true 
     })
     organisation:Organisation;
 

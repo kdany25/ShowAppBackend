@@ -11,20 +11,19 @@ export class EventRepository extends Repository<Event> {
    * @returns Events
    */
 
-  findByTitle(title: string) {
+  searchEvent(title: string) {
     return this.find({
-      where: [{ title: ILike(`%${title}%`),isDeleted:false }],
+      where: [{ title: ILike(`%${title}%`),isDeleted:false },
+      {eventCode:ILike(`%${title}%`)},
+      {eventCategory:ILike(`${title}`)},
+      {status:ILike(`${title}`)}
+    
+    ],
     });
   }
 
-   /** Repo: get event by title
-   * @param title the title 
-   * @returns Events
-   */
-  public  getByTitle(title:string){
-    return   this.findOne({
-      where:[{title,isDeleted:false}]
-    })
+  public async finById(id:string):Promise<Event>{
+    return this.findOne(id);
   }
 
    /** Repo: update event 
@@ -59,7 +58,7 @@ export class EventRepository extends Repository<Event> {
     event.isCanceled =isCanceled;
     await this.save(event);
     try{
-      return event;
+      return this.findOne(eventId);
 
     }catch(error){
       this.logger.error(`Failed to update event ${event.title}`);

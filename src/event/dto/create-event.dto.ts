@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   MinLength,
+  Matches
 } from 'class-validator';
 export class CreateEventDto {
 
@@ -78,9 +79,9 @@ export class CreateEventDto {
 })
   eventCategory: string;
 
-  @IsIn(['HAPPENING','ENDED','STARTED'],{message:'event status must be one of HAPPENING,ENDED,STARTED'})
+  @IsIn(['PENDING','HAPPENING','ENDED','STARTED'],{message:'event status must be one of HAPPENING,ENDED,STARTED'})
   @IsOptional()
-  @ApiProperty({type:String,enum:['HAPPENING','ENDED','STARTED'],default:'STARTED'})
+  @ApiProperty({type:String,enum:['PENDING','HAPPENING','ENDED','STARTED'],default:'PENDING'})
   status:string;
 
   @IsOptional()
@@ -125,4 +126,5 @@ export class CancelEventDto{
   @ApiProperty({type:Boolean,default:true,description:`cancel event by providing it's Id`})
   isCanceled:boolean;
 }
+
 

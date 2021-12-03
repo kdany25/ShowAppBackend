@@ -1,16 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Res, UseGuards, Logger, HttpCode, HttpStatus } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Res, UseGuards, Logger, HttpCode, HttpStatus, ForbiddenException, HttpException, ParseUUIDPipe, Req } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CancelEventDto, CreateEventDto} from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ApiAcceptedResponse, ApiBearerAuth, ApiBody, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiResponseProperty, ApiTags, ApiUnauthorizedResponse,  } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUserFromRequest } from '../shared/decorators/user.decorator';
+import { JwtService } from '@nestjs/jwt';
 @Controller('event')
 @ApiTags('Event')
 export class EventController {
   private logger=new Logger('EventController');
 
-  constructor( private eventService: EventService) {}
+  /**
+   * @param eventService
+   * @param jwtService
+   */
+  constructor( private eventService: EventService,private readonly jwtService: JwtService) {}
 
   /**
    * @Controller create a new event
@@ -28,7 +34,7 @@ export class EventController {
   @ApiConflictResponse({description:'event already'})
   @ApiBody({type:CreateEventDto})
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createEventDto: CreateEventDto,@Param('organisationId') organisationId:string,
+  async create(@Body() createEventDto: CreateEventDto,@Param('organisationId',new ParseUUIDPipe()) organisationId:string,
     @GetUserFromRequest('userId') userRequest:string ) {
     this.logger.log(`Organisation ${organisationId}  creates Event: ${JSON.stringify(createEventDto)} `);
     return await this.eventService.create(createEventDto,organisationId,userRequest);
@@ -56,12 +62,13 @@ export class EventController {
    * @returns array of events entity object
    */
   @Get('search/:title')
-  @ApiOkResponse({description:'Get  event By title has been successfully returned '})
+  @ApiOkResponse({description:' events has been successfully returned '})
   @ApiForbiddenResponse({description:'Forbidden '})
   @HttpCode(HttpStatus.OK)
-  async findByTitle(@Param('title') title:string ){
+  async searchEvent(@Param('title') title:string ){
     this.logger.verbose(`Search ${title} `);
-    return this.eventService.getByTitle(title);
+    if(title.match('[$#!@%^~.,|*()-=_+]')) throw new ForbiddenException ('search must not contain any special chars');
+    return this.eventService.searchEvent(title);
 
   }
 
@@ -79,7 +86,7 @@ export class EventController {
   @ApiBody({type:CancelEventDto})
   @ApiUnauthorizedResponse({description:'invalid credentials'})
   @HttpCode(HttpStatus.OK)
-  cancelEvent(@Param('id')id:string,@Body() cancelEventDto: CancelEventDto){
+  cancelEvent(@Param('id',new ParseUUIDPipe())id:string,@Body() cancelEventDto: CancelEventDto){
     this.logger.log(`cancel event by ${id}`);
     return this.eventService.cancelEvent(id,cancelEventDto);
 
@@ -98,7 +105,7 @@ export class EventController {
   @UseGuards(AuthGuard())
   @ApiOkResponse({description:'get events by organisation '})
   @HttpCode(HttpStatus.OK)
-  getEventByOrganisation(@Param('id') id:string){
+  getEventByOrganisation(@Param('id',new ParseUUIDPipe()) id:string){
     this.logger.log(`get event by organisation ${id}`);
     return this.eventService.getEventByOrganisationId(id);
   }
@@ -114,9 +121,11 @@ export class EventController {
   @ApiNotFoundResponse({description:'the event no found'})
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id',new ParseUUIDPipe()) id: string) {
     this.logger.log(`retrieve a single event by: ${id}`);
     return this.eventService.findOne(id);
+    }
+    
   }
 
   /**
@@ -133,9 +142,9 @@ export class EventController {
   @ApiForbiddenResponse({description:'Invalid id'})
   @ApiBody({type:CreateEventDto})
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
+  update(@Param('id',new ParseUUIDPipe()) id: string, @Body() updateEventDto: UpdateEventDto,@GetUserFromRequest('userId') userRequest:string) {
     this.logger.log(`update event with: ${id} and UpdatedEvent : ${updateEventDto}`);
-    return this.eventService.update(id, updateEventDto);
+    return this.eventService.update(id, updateEventDto,userRequest);
 
   }
 
@@ -150,9 +159,12 @@ export class EventController {
   @ApiOkResponse({description:'event is removed success'})
   @ApiNotFoundResponse({description:'Invalid Id'})
   @HttpCode(HttpStatus.OK)
-  public async remove(@Param('id') id: string) {
-    this.logger.log(`remove event by ${id} with event :${event}`);
-    return  await this.eventService.remove(id);
+  public async remove(@Param('id',new ParseUUIDPipe()) id: string,@Req() request) {
+    this.logger.log(`remove event by ${id}`);
+    const jwt = request.headers.authorization.replace('Bearer ', '');
+    const json = this.jwtService.decode(jwt, { json: true }) as { uuid: string };
+    const userId=json['userId'];
+    return  await this.eventService.remove(id,userId);
   }
 
  
