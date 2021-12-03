@@ -60,8 +60,9 @@ export class OrganisationController {
   // Get all Organizations
 
   @Get()
-  @UseGuards(AuthGuard(),IsUserAdminGuard)
-  @ApiOkResponse({
+  @UseGuards(AuthGuard(), IsUserAdminGuard)
+  @ApiBearerAuth('access-token')
+  @ApiResponse({
     status: 200,
     description: 'Organisations fetched successfully',
   })

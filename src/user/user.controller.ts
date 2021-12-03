@@ -89,7 +89,7 @@ export class UserController {
   @ApiNotFoundResponse({status:404, description:'a user not found'})
   async remove(@Param('id') id: string, @Res() res: Response) {
     await this.userService.remove(id);
-    return res.status(200).json({statusCode:200, message:"user deleted successful"})
+    return res.status(200).json({statusCode:200, message:"user deleted successfully"})
   }
 
   // user login
@@ -110,7 +110,7 @@ export class UserController {
       }
       const token = await this.userService.genareteTokenWithEmail({...payload })
       res.cookie('accessToken', token)
-      return res.status(200).json({message:'log in successful', token});
+      return res.status(200).json({message:'log in successfully', token});
       
     } catch (error) {
       return res.status(500).json({ error: error.message})
@@ -130,21 +130,21 @@ export class UserController {
       email: userExist.email
     }
      const token = await this.userService.genareteTokenWithEmail({...payload});
-     
+     await this.userService.saveResetPassToken(userExist.email, token)
      this.userService.sendEmail(userExist.email, token);
      return res.status(200).json({message:'We sent link to reset password to your email!'});
 
   }
 
   // reset password
-  @Patch('/:token')
+  @Patch('/resetpassword/:token')
   @ApiResponse({status:200, description:'a request password reset sent successful'})
   @ApiBadRequestResponse({status:400, description: 'when new and confirm password are not munch, new or confirm password are empty'})
   @ApiUnauthorizedResponse({status:401, description:'when token expired'})
-  async resetPassword(@Body() resetDto: resetPasswordDto, @Param('token') token, @Res() res: Response) {
+  async resetPassword(@Body() resetDto: resetPasswordDto, @Param('token') token:string, @Res() res: Response) {
     try {
      await this.userService.resetPassword(resetDto.newPassword, resetDto.confirmPassword, token)
-     return res.status(200).json({message: 'password reseted successful! login with new password'}) 
+     return res.status(200).json({message: 'password reseted successfully! login with new password'}) 
     } catch (error) {
       return res.status(401).json({error: error.message})
     }
@@ -163,7 +163,8 @@ export class UserController {
   }
 
   // change password
-  @Patch('/account/me')
+  @Patch('/account/changepassword')
+  @ApiBearerAuth('access-token')
   @ApiResponse({status:200, description:'a request password reset sent successful'})
   @ApiBadRequestResponse({status:400, description: 'when new and confirm password are not munch, new or confirm password are empty'})
   @ApiUnauthorizedResponse({status:401, description:'when current password are different with password in database, or when user no token provided'})
@@ -173,7 +174,7 @@ export class UserController {
     const token = headers.split(' ')[1]
 
      await this.userService.changepassword(resetDto.currentPassword, resetDto.newPassword, resetDto.confirmPassword, token, res)
-     return res.status(200).json({message: 'password changed successful! login with new password!'}) 
+     return res.status(200).json({message: 'password changed successfully! login with new password!'}) 
     
   }
 }
