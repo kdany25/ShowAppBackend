@@ -13,11 +13,13 @@ import { OrganisationService } from './organisation.service';
 import { CreateOrganisationDto } from './dto/create-organisation.dto';
 import { UpdateOrganisationDto } from './dto/update-organisation.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -26,6 +28,7 @@ import { GetUserFromRequest } from 'src/shared/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
 import { IsUserAdminOrOrganizerGuard } from 'src/shared/guards/organizerAndAdmin';
+import { IsUserAdminGuard } from 'src/shared/guards/isUserAdmin';
 
 @ApiTags('Organisation')
 @Controller('organisation')
@@ -57,19 +60,20 @@ export class OrganisationController {
   // Get all Organizations
 
   @Get()
-  @ApiResponse({
+  @UseGuards(AuthGuard(),IsUserAdminGuard)
+  @ApiOkResponse({
     status: 200,
     description: 'Organisations fetched successfully',
   })
-  @ApiResponse({ status: 404, description: 'N0t found' })
+  @ApiNotFoundResponse({description: 'Organizations not found' })
   findAll() {
     return this.organisationService.findAll();
   }
 
   // Find one organization by Id
 
-  @ApiResponse({ status: 200, description: 'Organisation fetched' })
-  @ApiResponse({ status: 404, description: 'N0t found' })
+  @ApiOkResponse({ status: 200, description: 'Organisation fetched' })
+  @ApiNotFoundResponse({description: 'Organization not found' })
   @Get(':organisationId')
   findOne(@Param('organisationId', ParseUUIDPipe) organisationId: string) {
     return this.organisationService.findById(organisationId);
@@ -78,7 +82,7 @@ export class OrganisationController {
   // search organization by name
 
   @ApiResponse({ status: 200, description: 'Organisations fetched' })
-  @ApiResponse({ status: 404, description: '0 results found' })
+  @ApiNotFoundResponse({description: '0 results found' })
   @Get('search/:name')
   getOrganisationByName(@Param('name') name: string) {
     return this.organisationService.findByName(name);
@@ -93,10 +97,11 @@ export class OrganisationController {
     description: 'Organisation updated successfully!',
   })
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiNotFoundResponse({ status: 404, description: 'organization Not found' })
+  @ApiNotFoundResponse({description: 'organization Not found' })
   @ApiForbiddenResponse({status:403, description: "Access denied, You can only update your own organization"})
   @ApiConflictResponse({status:409,description : "conflicts, organizition already exists"})
-  @Patch(':organisationId')
+  @UseGuards(AuthGuard(),IsUserAdminOrOrganizerGuard)
+  @Patch('update/:organisationId')
   async update(
     @Param('organisationId', ParseUUIDPipe) organisationId: string,
     @Body() updateOrganisationDto: UpdateOrganisationDto,
@@ -112,11 +117,11 @@ export class OrganisationController {
 
   // Get all organizations of a particular User
 
-  @ApiResponse({
-    status: 201,
+  @ApiOkResponse({
     description: 'Organisations fetched successfully!',
   })
-  @ApiNotFoundResponse({ status: 404, description: 'Not found' })
+  @ApiNotFoundResponse({description: 'Not found' })
+  @UseGuards(AuthGuard(),IsUserAdminOrOrganizerGuard)
   @Get('user/:userId')
   getOrganisationByUserId(@Param('userId') userId) {
     return this.organisationService.getOrganisationsByUserId(userId);
@@ -125,15 +130,55 @@ export class OrganisationController {
   // Delete an organization by Id
 
   @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard())
-  @ApiResponse({
-    status: 200,
+  @UseGuards(AuthGuard(),IsUserAdminOrOrganizerGuard)
+  @ApiOkResponse({
     description: 'Organisation deleted successfully!',
   })
   @ApiNotFoundResponse({ status: 404, description: 'organization Not found' })
   @ApiForbiddenResponse({status:403, description: "Access denied, You can only delete your own organization"})
+  @UseGuards(AuthGuard(),IsUserAdminOrOrganizerGuard)
   @Delete(':organisationId')
   remove(@Param('organisationId') organisationId: string,@GetUserFromRequest() user:any,) {
     return this.organisationService.remove(organisationId,user);
   }
+
+
+  // Suspend Organisation
+
+  @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Organization suspended' })
+  @ApiBadRequestResponse({
+    description: 'Only an active organization can be suspended',
+  })
+  @ApiNotFoundResponse({ description: 'Organization not found' })
+  @UseGuards(AuthGuard(), IsUserAdminGuard)
+  @Patch('suspend/:id')
+  async suspendOrganization(
+    @Param('id') id: string,
+  ) {
+    return {
+      message: 'Organization suspended.',
+      data: await this.organisationService.suspendOrganization(id),
+    };
+  }
+
+
+// Activate organisation
+
+  @ApiBearerAuth()
+  @ApiOkResponse({ description: 'Organization activated successfully!' })
+  @ApiBadRequestResponse({ description: 'The organization is not suspended' })
+  @ApiNotFoundResponse({ description: 'Organization not found' })
+  @UseGuards(AuthGuard(), IsUserAdminGuard)
+  @Patch('reactivate/:id')
+  async reactivateOrganization(
+    @Param('id') id: string,
+  ) {
+    return {
+      message: 'Organization activated successfully',
+      data: await this.organisationService.reactivateOrganization(id),
+    };
+  }
+
+
 }

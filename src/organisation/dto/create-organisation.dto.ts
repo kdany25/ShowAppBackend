@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID, Length, Matches } from 'class-validator';
 import { User } from "src/user/entities/user.entity";
 
 
@@ -9,6 +9,9 @@ export class CreateOrganisationDto {
     @IsString()
     @IsNotEmpty({message:"Organisation name can not be empty"})
     @Length(3,40,{message:"Organisation name must be between 3- 40 characters"})
+    @Matches(/.?[^!@#$%*&^]/, {
+        message: 'Please include a letter',
+      })
     @ApiProperty({
     description: 'the name  of organisation',
     default: 'Lux Entetainers'})
