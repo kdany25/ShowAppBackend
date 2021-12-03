@@ -1,7 +1,7 @@
 import { Transform } from "class-transformer";
-import { Organisation } from "src/organisation/entities/organisation.entity";
-import { Ticket } from "src/ticket/entities/ticket.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp } from "typeorm";
+import { Organisation } from "../../organisation/entities/organisation.entity";
+import { Ticket } from "../../ticket/entities/ticket.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp, Unique } from "typeorm";
 
 @Entity('events')
 export class Event {
@@ -9,6 +9,8 @@ export class Event {
     @PrimaryGeneratedColumn('uuid')
     eventId:string;
 
+    @Column({nullable:false,unique:true})
+    eventCode:string;
    
     @Column({nullable:false})    
     title:string;
@@ -34,6 +36,12 @@ export class Event {
     @Column({nullable:false})
     isPublished:boolean;
 
+    @Column({nullable:true,default:'PENDING'})
+    status:string;
+
+    @Column({nullable:true,default:false})
+    isDeleted:boolean;
+
     @Column({nullable:false})
     eventCategory:string;
 
@@ -58,11 +66,12 @@ export class Event {
     @Column({nullable:true})
     isCanceled:boolean;
 
-    @ManyToOne(()=>Organisation,(organisation)=>organisation.events,{
+    @ManyToOne(()=>Organisation,(organisation)=>organisation.events,{ eager:true 
     })
     organisation:Organisation;
 
     @OneToMany(()=>Ticket,(ticket)=>ticket.event,{
+        onDelete:'CASCADE'
         
     })
     tickets:Ticket[];

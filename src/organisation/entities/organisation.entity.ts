@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Event } from "src/event/entities/event.entity";
 import { Status } from "src/shared/interfaces";
 import { User } from "src/user/entities/user.entity";

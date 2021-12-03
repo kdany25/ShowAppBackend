@@ -1,5 +1,5 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { EntityRepository, ILike, Repository } from 'typeorm';
+import { EntityRepository, getConnection, ILike, Repository } from 'typeorm';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 
@@ -11,20 +11,19 @@ export class EventRepository extends Repository<Event> {
    * @returns Events
    */
 
-  findByTitle(title: string) {
+  searchEvent(title: string) {
     return this.find({
-      where: [{ title: ILike(`%${title}%`) }],
+      where: [{ title: ILike(`%${title}%`),isDeleted:false },
+      {eventCode:ILike(`%${title}%`)},
+      {eventCategory:ILike(`${title}`)},
+      {status:ILike(`${title}`)}
+    
+    ],
     });
   }
 
-   /** Repo: get event by title
-   * @param title the title 
-   * @returns Events
-   */
-  public  getByTitle(title:string){
-    return   this.findOne({
-      where:[{title}]
-    })
+  public async finById(id:string):Promise<Event>{
+    return this.findOne(id);
   }
 
    /** Repo: update event 
@@ -40,7 +39,7 @@ export class EventRepository extends Repository<Event> {
     vvipAvailabelSeats,vvipPrice,vipAvailabelSeats,vipPrice,regularAvailabelSeats,regularPrice
     ,isCanceled
     } = updateEventDto;
-    const event = await this.findOne(eventId);
+    const event = await this.findOne({where:[{eventId,isDeleted:false}]});
     event.title =title;
     event.description = description;
     event.thumbnail =thumbnail;
@@ -59,7 +58,7 @@ export class EventRepository extends Repository<Event> {
     event.isCanceled =isCanceled;
     await this.save(event);
     try{
-      return event;
+      return this.findOne(eventId);
 
     }catch(error){
       this.logger.error(`Failed to update event ${event.title}`);
@@ -70,7 +69,15 @@ export class EventRepository extends Repository<Event> {
  
  public async deleteEvent(eventId:string):Promise<void>{
     const event = await this.findOne(eventId);
-    await this.remove(event);
+    if(!event.isDeleted){
+      
+      await getConnection()
+      .createQueryBuilder()
+      .update(Event)
+      .set({isDeleted:true})
+      .where("eventId= :eventId",{eventId})
+      .execute();
+    }
 
   }
 
@@ -79,7 +86,7 @@ export class EventRepository extends Repository<Event> {
     updateEventDto: UpdateEventDto,
 ): Promise<Event> {
     const { isCanceled } = updateEventDto;
-    const event = await this.findOne(eventId);
+    const event = await this.findOne({where:[{eventId,isDeleted:false}]});
     event.isCanceled = isCanceled;
     
     await this.save(event);
