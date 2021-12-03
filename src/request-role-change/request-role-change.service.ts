@@ -62,13 +62,9 @@ export class RequestRoleChangeService {
     return singleRequest;
   }
 
-  //find user in requests table
-  async findOneUser(id: string) {
-    const singleUser = await this.requestRoleChangeRepo.findOne({
-      where: { id },
-    });
-    if (singleUser) throw new ConflictException('You have already requested to be an Organizer, please bear with as we process your request');
-    return singleUser;
-  }
+  async findExistingRequest (userId: string) {
+    const exist = await this.requestRoleChangeRepo.find({where:{userId}});
+    if (exist) throw new ConflictException('Your request is still pending')
+   }
 
 }

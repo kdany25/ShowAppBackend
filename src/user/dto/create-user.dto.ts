@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsEmail, IsDate, IsIn, IsArray,IsNotEmpty, IsOptional } from 'class-validator';
+import { IsEmail, IsDate, IsIn, IsArray,IsNotEmpty, IsOptional, IsPhoneNumber, Matches, MinLength, IsDateString } from 'class-validator';
 import { Organisation } from 'src/organisation/entities/organisation.entity';
 import { Ticket } from 'src/ticket/entities/ticket.entity';
 import { ApiProperty,ApiPropertyOptional } from '@nestjs/swagger';
@@ -24,21 +24,23 @@ export class CreateUserDto {
 
   /* @IsIn(['USER','ORGANISER','ADMIN'])
   role: 'USER'|'ORGANISER'|'ADMIN'; */
-  @ApiProperty({ description: 'This is the user password', default: '18700' })
+  @ApiProperty({ description: 'This is the user password', default: 'Taskforce2' })
   @IsNotEmpty()
+  @MinLength(8,{message:"Password must be at least 8 characters"})
   password: string;
 
-  @ApiProperty({ description: 'This is the user phone number', default: '0781407229' })
+  @ApiProperty({ description: 'This is the user phone number', default: '+250781407229' })
   @IsNotEmpty()
+  @IsPhoneNumber()
   phone: string;
   
-  @ApiProperty({ description: 'This is the user date of birth', default: '1996/01/16' })
+  @ApiProperty({ description: 'This is the user date of birth', default: '1996-01-16' })
   @IsNotEmpty()
-  // @IsDate({message:'Date of Birth has to be a valid date'})
+  @IsDateString()
   dOb: Date;
 
   @IsOptional()
-  @ApiProperty({ description: 'This is the users avatar', default: 'Nthttps://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpgwari' })
+  @ApiProperty({ description: 'This is the users avatar', default: 'https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg' })
   avatar: string;
 
   @ApiProperty({ description: 'This is the user gender', default: 'MALE' })

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Headers, Delete, Res, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,11 +23,15 @@ export class UserController {
   @ApiBody({type:CreateUserDto})
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response): Promise<any> {
-    await this.userService.findUserByEmail(createUserDto.email)
+   const wasDeleted =  await this.userService.findUserByEmail(createUserDto.email, createUserDto.password)
+    if (wasDeleted) return res.status(201).json({ message: "User successfully created" });
     try {
       const payload = {
         email: createUserDto.email
       }
+      const d = await this.userService.validateDate(createUserDto.dOb)
+      console.log(d);
+      if (!d) return res.status(400).json({ message: "Date of birth can not be in the future"})
       const token = await this.userService.genareteToken({...payload})
       const data = await this.userService.create(createUserDto)
       this.userService.sendConfirmationEmail(createUserDto.email,token);

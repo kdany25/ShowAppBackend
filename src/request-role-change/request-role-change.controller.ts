@@ -18,6 +18,7 @@ export class RequestRoleChangeController {
   @UseGuards(AuthGuard())
   async create( @Res() res:Response,@GetUserFromRequest() user:any): Promise<any> {
     try {
+      await this.requestRoleChangeService.findExistingRequest(user.userId)      
       const request = await this.requestRoleChangeService.create(user);
       return res.status(201).json({ message: "Role request created successfully", data: { request } });
     } catch (error) {
@@ -60,7 +61,7 @@ export class RequestRoleChangeController {
     try {
       await this.requestRoleChangeService.findOne(user,id)
       const resp = await this.requestRoleChangeService.updateRequest(user,id)
-      return res.status(202).json({ message: `Role change approved and user ${resp} is now an Organizer` })
+      return res.status(202).json({ message: `user ${resp} is now an Organizer` })
     } catch (error) {
       return res.status(500).json({ status: 500, error: error.message })
     }
