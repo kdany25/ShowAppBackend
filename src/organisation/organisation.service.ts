@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -6,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtPayload } from 'src/shared/interfaces';
+import { JwtPayload, Status } from 'src/shared/interfaces';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { ILike, Repository } from 'typeorm';
@@ -56,18 +57,22 @@ export class OrganisationService {
 
   async findById(organisationId: string): Promise<Organisation> {
     let org = await this.organisationRepo.findOne({ organisationId });
-    if (!org) throw new NotFoundException(' no organization found');
+    if (!org || org.status == Status.DELETED) throw new NotFoundException(' no organization found');
     return org;
   }
 
   // Search organization by name:
 
   async findByName(name: string): Promise<Organisation[]> {
+    try{
     let organisations = await this.organisationRepo.find({
       where: [{ name: ILike(`%${name}%`) }],
     });
     if (organisations.length<1) throw new NotFoundException('0 results');
     return organisations;
+  }catch (error){
+throw new Error (error.message)
+  }
   }
 
   // Update Organization:
@@ -79,12 +84,13 @@ export class OrganisationService {
   ) {
     try {
       const org = await await this.findById(organisationId);
-      if (!org) throw new NotFoundException('Organization not found');
-
-      if (org.user.userId != user.userId)
+      if (!org || org.status == Status.DELETED) throw new NotFoundException('Organization not found');
+    
+        if (org.user.userId != user.userId && user.role == "ORGANISER")
         throw new ForbiddenException(
           'Access denied, You can only update your organization',
         );
+      
 
       return await this.organisationRepo.save({
         ...org,
@@ -103,15 +109,16 @@ export class OrganisationService {
 
   async remove(organisationId: string, user: any) {
     const org = await await this.findById(organisationId);
-    if (!org) throw new NotFoundException('Organization not found');
+    if (!org || org.status == Status.DELETED) throw new NotFoundException('Organization not found');
 
-    if (org.user.userId != user.userId)
+    
+    if (org.user.userId != user.userId && user.role == "ORGANISER")
       throw new ForbiddenException(
         'Access denied, You can only delete your organization',
       );
 
     const deleted = { ...org };
-    await this.organisationRepo.delete(organisationId);
+    await this.organisationRepo.save({ ...org, status: Status.DELETED });
 
     return { message: 'organization deleted successfully', data: deleted };
   }
@@ -123,6 +130,28 @@ export class OrganisationService {
     return orgs;
 
   }
+
+  // Suspend organization:
+
+  async suspendOrganization(id: string): Promise<Organisation> {
+    const org = await this.findById(id);
+    if (org.status != Status.ACTIVE)
+      throw new BadRequestException(
+        'Only active organization can be suspended',
+      );
+    return await this.organisationRepo.save({ ...org, status: Status.SUSPENDED });
+  }
+
+  // Reactivate Organizations:
+
+  async reactivateOrganization(id: string): Promise<Organisation> {
+    const org = await this.findById(id);
+    if (org.status != Status.SUSPENDED)
+      throw new BadRequestException('The organization is not suspended');
+    return await this.organisationRepo.save({ ...org, status: Status.ACTIVE });
+  }
+
+  // VAlidate User:
 
   async validateUser(payload: JwtPayload): Promise<User> {
     const user = await this.userServices.findOne(payload.userId);

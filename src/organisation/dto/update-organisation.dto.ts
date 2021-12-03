@@ -1,9 +1,17 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID, Matches } from 'class-validator';
 import { CreateOrganisationDto } from './create-organisation.dto';
 
 export class UpdateOrganisationDto extends PartialType(CreateOrganisationDto) {
     @IsOptional()
+    @IsString()
+    @Matches(/.?[^!@#$%*&^]/, {
+        message: 'Please include a letter',
+      })
+      @ApiProperty({
+        description: 'the name  of organisation',
+        default: 'Lux Entetainers updated'})
     name:string;
 
     @IsEmail()
