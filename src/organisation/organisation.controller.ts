@@ -40,6 +40,7 @@ export class OrganisationController {
 
   // Create Organization
 
+  @ApiTags('x-user-journey')
   @Post('/create')
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard(), IsUserAdminOrOrganizerGuard)

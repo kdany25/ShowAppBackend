@@ -26,6 +26,7 @@ export class EventController {
    * @throws unauthorized error
    */
 
+   @ApiTags('x-user-journey')
   @Post(':organisationId')
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard())
@@ -47,6 +48,7 @@ export class EventController {
    */
 
   @Get()
+  @ApiTags('x-user-journey')
   @ApiOkResponse({description:'the event list has been successfully returned '})
   @ApiForbiddenResponse({description:'Forbidden '})
   @HttpCode(HttpStatus.OK)

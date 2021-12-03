@@ -27,6 +27,7 @@ export class TicketController {
   private readonly eventService : EventService) {}
 
   //creating ticket
+  @ApiTags('x-user-journey')
   @Post(':id')
   @UseGuards(AuthGuard())
   @ApiBearerAuth('access-token')
@@ -78,6 +79,7 @@ export class TicketController {
   }
 
   //checking if ticket is not used
+  @ApiTags('x-user-journey')
   @Patch('check/:id')
   @UseGuards(AuthGuard())
   @ApiBearerAuth('access-token')
