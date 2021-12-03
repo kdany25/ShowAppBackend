@@ -47,10 +47,21 @@ export class OrganisationService {
 
   // find all organizations:
 
-  async findAll(): Promise<Organisation[]> {
-    let organizations = await this.organisationRepo.find();
-    if (!organizations) throw new NotFoundException(' no organization found');
-    return organizations;
+  async findAll(status: Status): Promise<Organisation[]> {
+    if (status) {
+      if (!Object.values(Status).includes(status))
+        throw new BadRequestException('UNKNWON STATUS');
+      let organizations = await this.organisationRepo.find({
+        where: {
+          status,
+        },
+      });
+      if (!organizations) throw new NotFoundException('no organisations found')
+      return organizations;
+    }
+    let organisations = await this.organisationRepo.find();
+    if (!organisations) throw new NotFoundException('no organisations found')
+    return organisations;
   }
 
   // Find one organization by Id:
@@ -69,7 +80,7 @@ export class OrganisationService {
       where: [{ name: ILike(`%${name}%`) }],
     });
     if (organisations.length<1) throw new NotFoundException('0 results');
-    return organisations;
+    return organisations.filter(item=>item.status==Status.ACTIVE)
   }catch (error){
 throw new Error (error.message)
   }
