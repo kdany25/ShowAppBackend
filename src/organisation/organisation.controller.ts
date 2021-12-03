@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { OrganisationService } from './organisation.service';
 import { CreateOrganisationDto } from './dto/create-organisation.dto';
@@ -20,6 +21,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -29,6 +31,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
 import { IsUserAdminOrOrganizerGuard } from 'src/shared/guards/organizerAndAdmin';
 import { IsUserAdminGuard } from 'src/shared/guards/isUserAdmin';
+import { Status } from 'src/shared/interfaces';
 
 @ApiTags('Organisation')
 @Controller('organisation')
@@ -60,15 +63,16 @@ export class OrganisationController {
   // Get all Organizations
 
   @Get()
-  @UseGuards(AuthGuard(), IsUserAdminGuard)
   @ApiBearerAuth('access-token')
-  @ApiResponse({
+  @UseGuards(AuthGuard(),IsUserAdminGuard)
+  @ApiOkResponse({
     status: 200,
     description: 'Organisations fetched successfully',
   })
   @ApiNotFoundResponse({description: 'Organizations not found' })
-  findAll() {
-    return this.organisationService.findAll();
+  @ApiQuery({ name: 'status', required: false })
+  findAll(@Query('status') status?: Status) {
+    return this.organisationService.findAll(status);
   }
 
   // Find one organization by Id
@@ -146,7 +150,7 @@ export class OrganisationController {
 
   // Suspend Organisation
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Organization suspended' })
   @ApiBadRequestResponse({
     description: 'Only an active organization can be suspended',
@@ -166,7 +170,7 @@ export class OrganisationController {
 
 // Activate organisation
 
-  @ApiBearerAuth()
+@ApiBearerAuth('access-token')
   @ApiOkResponse({ description: 'Organization activated successfully!' })
   @ApiBadRequestResponse({ description: 'The organization is not suspended' })
   @ApiNotFoundResponse({ description: 'Organization not found' })
