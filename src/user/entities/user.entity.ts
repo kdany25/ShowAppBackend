@@ -29,7 +29,7 @@ export class User {
     @Column({nullable : false,default:false})
     isVerified? : boolean;
 
-    @Column({nullable : false,default:'active'})
+    @Column({nullable : false,default:"active"})
     status? : string;
 
     @Column({nullable : false})

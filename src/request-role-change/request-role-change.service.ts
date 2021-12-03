@@ -19,6 +19,8 @@ export class RequestRoleChangeService {
   // create a new request role change request
 
   async create(user: any): Promise<any> {
+    const requestr = await this.requestRoleChangeRepo.findOne({relations:['user']});
+    if (requestr && requestr.isApproved === false) throw new ForbiddenException("Your request still pending! please wait your approval!")
     if (user.role === "ORGANISER") throw new ConflictException({status: 409, message:'you arleady have organiser as role'});
     const newRequest = { requestId: uuid(), user: user };
     await this.requestRoleChangeRepo.save(newRequest);
@@ -62,13 +64,5 @@ export class RequestRoleChangeService {
     return singleRequest;
   }
 
-  //find user in requests table
-  async findOneUser(id: string) {
-    const singleUser = await this.requestRoleChangeRepo.findOne({
-      where: { id },
-    });
-    if (singleUser) throw new ConflictException('You have already requested to be an Organizer, please bear with as we process your request');
-    return singleUser;
-  }
 
 }

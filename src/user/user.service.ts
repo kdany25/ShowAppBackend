@@ -1,4 +1,4 @@
-import { ConflictException, Injectable,Inject, ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable,Inject, ForbiddenException, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,9 +28,19 @@ export class UserService {
   }
 
   // finds existing email in the database while creating new user
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string,password: string) {
     const userEmail = await this.userRepository.findOne({ where: { email: email } })
-    if (userEmail) throw new ConflictException({ statusCode: 409, message: `User with the same email already exists` });
+    if (!userEmail) return 0
+    if (userEmail.status === "active") throw new ConflictException({ statusCode: 409, message: `User with the same email already exists` });
+    if (userEmail.status === "deleted") return await this.createReturningUser(email, password)
+    
+  }
+
+  async createReturningUser(email:string,password:string) {
+    const hashed = await this.encryptPassword(password);
+    await this.userRepository.update({ email }, { status: "active" })
+   return await this.userRepository.update({ email }, { password: hashed })
+   
   }
 
   // finds existing email in the database
@@ -217,4 +227,14 @@ export class UserService {
     return await this.userRepository.update(user.userId, { password: passwordTosave });
   }
 
+  // date of birth validator
+  
+  async validateDate(dOb:Date) {
+    const dateof = new Date(dOb)
+    const currentDate = new Date(Date.now())
+    const dobYear = dateof.getFullYear()
+    const currentYear = currentDate.getFullYear()    
+    if (dobYear > currentYear) return false
+    else return true
+  }
 }
