@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Res, UseGuards, Logger, HttpCode, HttpStatus, ForbiddenException, HttpException, ParseUUIDPipe, Req } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CancelEventDto, CreateEventDto} from './dto/create-event.dto';
@@ -86,9 +85,12 @@ export class EventController {
   @ApiBody({type:CancelEventDto})
   @ApiUnauthorizedResponse({description:'invalid credentials'})
   @HttpCode(HttpStatus.OK)
-  cancelEvent(@Param('id',new ParseUUIDPipe())id:string,@Body() cancelEventDto: CancelEventDto){
+  cancelEvent(@Param('id',new ParseUUIDPipe())id:string,@Body() cancelEventDto: CancelEventDto,@Req() request){
     this.logger.log(`cancel event by ${id}`);
-    return this.eventService.cancelEvent(id,cancelEventDto);
+    const jwt = request.headers.authorization.replace('Bearer ', '');
+    const json = this.jwtService.decode(jwt, { json: true }) as { uuid: string };
+    const userId=json['userId'];
+    return this.eventService.cancelEvent(id,cancelEventDto,userId);
 
   }
 
@@ -126,7 +128,7 @@ export class EventController {
     return this.eventService.findOne(id);
     }
     
-  }
+  
 
   /**
    * @Controller update an event
@@ -159,7 +161,7 @@ export class EventController {
   @ApiOkResponse({description:'event is removed success'})
   @ApiNotFoundResponse({description:'Invalid Id'})
   @HttpCode(HttpStatus.OK)
-  public async remove(@Param('id',new ParseUUIDPipe()) id: string,@Req() request) {
+  public async remove(@Param('id',new ParseUUIDPipe()) id:string,@Req() request) {
     this.logger.log(`remove event by ${id}`);
     const jwt = request.headers.authorization.replace('Bearer ', '');
     const json = this.jwtService.decode(jwt, { json: true }) as { uuid: string };
