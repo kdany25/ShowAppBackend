@@ -1,5 +1,11 @@
-/* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete ,UseGuards} from '@nestjs/common';
+import { Controller,
+         Get,
+         Post,
+         Body,
+         Patch,
+         Param,
+         Delete,
+         UseGuards} from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -16,7 +22,8 @@ import { EventService } from '../event/event.service';
 
 export class TicketController {
   //constructor
-  constructor(private readonly ticketService: TicketService ,
+  constructor(
+  private readonly ticketService: TicketService ,
   private readonly eventService : EventService) {}
 
   //creating ticket
@@ -28,12 +35,13 @@ export class TicketController {
   async create(@Body() createTicketDto: CreateTicketDto,
   @GetUserFromRequests() user,
   @Param('id')eventId:string) {
+  const event = await this.eventService.findOne(eventId)
   const ticket=  await this.ticketService.create(createTicketDto,eventId,user);
   this.ticketService.sendTicketMail(user.email,
     createTicketDto.seatCategory,
     createTicketDto.price,
     createTicketDto.seat_number,
-    user.firstName ,
+    user.firstName,
     user.lastName)
     return ticket;
 }
@@ -44,7 +52,7 @@ export class TicketController {
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 200, description: 'fetch all ticket' })
   findAll(@GetUserFromRequest() user:JwtPayload ) {
-  if(user.role){
+  if(user.role == 'ORGANISER'){
    return this.ticketService.findAll();
   }else{
       return ' unauthorised access' ;
@@ -57,27 +65,9 @@ export class TicketController {
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 200, description: 'fetch ticket by Id' })
   findOne(@Param('id') id: string , @GetUserFromRequest('userId') user:JwtPayload) {
-   return this.ticketService.findOne(id);
+   return this.ticketService.findOne(id,user);
   }
 
-  //Update ticket 
-  @Patch(':id')
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth('access-token')
-  @ApiResponse({ status: 201, description: 'ticket Refunded' })
-  update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
-   return this.ticketService.update(id, updateTicketDto);
-  }
-
-  //delete Ticket
-  @Delete(':id')
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth('access-token')
-  @ApiResponse({ status: 201, description: 'ticket deleted' })
-  remove(@Param('id') id: string) {
-   return this.ticketService.remove(+id);
-  }
-  
   //Generate Qrcode
   @Get('qr/:id')
   @UseGuards(AuthGuard())
@@ -93,8 +83,11 @@ export class TicketController {
   @ApiBearerAuth('access-token')
   @ApiResponse({ status: 200, description: 'ticket checking' })
   @ApiResponse({ status: 404, description: 'Not found' })
-  check(@Param('id') id: string, @Body() updateTicketusedDto: UpdateTicketUsedDto) {
-   return this.ticketService.check(id ,updateTicketusedDto);
+  check(@Param('id') id: string) {
+   return this.ticketService.check(id );
   }
+
+  
+
   
 }

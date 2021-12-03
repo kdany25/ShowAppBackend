@@ -1,5 +1,4 @@
-/* eslint-disable prettier/prettier */
-import { HttpException,
+import { ForbiddenException, HttpException,
          HttpStatus,
          Injectable,
          UnauthorizedException } from '@nestjs/common';
@@ -12,10 +11,9 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Ticket } from './entities/ticket.entity';
 import { from, Observable } from 'rxjs';
 import { toDataURL } from 'qrcode';
-import { JwtPayload } from '../shared/interfaces';
-import { UserService } from '../user/user.service';
-import { EventService } from '../event/event.service';
-import { UpdateTicketUsedDto } from './dto/update-used-dto';
+import { JwtPayload } from 'src/shared/interfaces';
+import { UserService } from 'src/user/user.service';
+import { EventService } from 'src/event/event.service';
 import * as SendGrid from '@sendgrid/mail';
 
 
@@ -26,14 +24,23 @@ constructor(
 @InjectRepository(User) private userrepo: Repository<User>,
 @InjectRepository(Event) private eventrepo: Repository<Event>,
 @InjectRepository(Ticket) private ticketrepo: Repository<Ticket>,
-private userServices:UserService , private eventservice :EventService){}
+private userServices:UserService ,
+private eventservice :EventService){}
 
   //create ticket
-  public async create(createTicketDto: CreateTicketDto, eventId:string ,user)  {
+  public async create(createTicketDto: CreateTicketDto,eventId:string,user)  {                   
   try {
   const dt = createTicketDto;
-  dt.price = dt.price* dt.ticket_quantity
-  const tic = await this.ticketrepo.save({...dt,eventId,user})
+  const tic = []
+  for( let i=0 ;i<dt.ticket_quantity ;i++){ 
+  const result = await this.ticketrepo.save({
+      ...dt,
+      ticket_quantity: 1,
+      eventId,
+      user})
+
+      tic.push(result);
+  }
   return tic
        }
   catch (error) {
@@ -47,8 +54,10 @@ private userServices:UserService , private eventservice :EventService){}
   }
 
   //Get ticket By Id
-  findOne(id: string) : Observable<Ticket> {
-  return from (this.ticketrepo.findOne(id));
+  async findOne(id: string , User) : Promise<Ticket> {
+   const checkowner = await this.validateOwnership(id,User)
+   if (!checkowner) throw new ForbiddenException('this ticket does not belong to you')
+  return await this.ticketrepo.findOne(id);
   }
  
   //Update Ticket details
@@ -57,8 +66,8 @@ private userServices:UserService , private eventservice :EventService){}
   }
   
   //delete ticket
-  remove(id: number )  {
-  return `This action removes a #${id} ticket`;
+  remove(id: string )  {
+  return this.ticketrepo.delete(id);
   }
 
   //Generate QRCode for ticket
@@ -74,28 +83,35 @@ private userServices:UserService , private eventservice :EventService){}
     }
     }
   //Checking ticket if is valid 
-  async check (id : string , updateTicketUsedDto: UpdateTicketUsedDto){
+  async check (id : string ) : Promise<any> {
     
     try {
-      const check = this.ticketrepo.findOne({id:id,refund:false , used:false});
-      if(check) {
-      this.ticketrepo.update(id,updateTicketUsedDto) 
-      } else 
-      return 'ticked has already used '
+      const check =  await this.ticketrepo.findOne({id:id,refund:false , used:false});
+      console.log(check)
+      if(!check) {
+         return 'ticked has already used '
+      } else {
+            
+           this.ticketrepo.save({...check,used:true})
+           return 'Welcome'
+      }
     } catch (error) {
       throw new HttpException(error,HttpStatus.BAD_REQUEST)
     }
    }
-
   // validate user 
   async validateUser(payload: JwtPayload): Promise<User> {
    const user = await this.userServices.findOne(payload.userId);
    if (!user) throw new UnauthorizedException('Invalid token');
     return user;
   }
-
   // email sender function
-  sendTicketMail(userEmail: string , seatC : string , price : number , seatN : string ,fName:string ,sName:string ) {
+  sendTicketMail(userEmail: string ,
+                 seatC : string ,
+                 price : number ,
+                 seatN : string ,
+                 fName:string ,
+                 sName:string ) {
   const data = {
       template:"d-d62e8fc27ce4463f80ed4b795b21cfa9", 
                  }
@@ -114,9 +130,23 @@ private userServices:UserService , private eventservice :EventService){}
         Seat_Number: seatN,
       }
     }
-
   SendGrid.setApiKey(process.env.SENDGRID_API_KEY)
   const transport = SendGrid.send(mailContent)
   return transport
       }
+
+  // checking the ownership of ticket
+  async validateOwnership(ticketid: any,user:User):Promise<boolean> {
+  if(user.role=="USER"){
+      const org = await this.ticketrepo.findOne({
+          where:{
+          id:ticketid,
+          user
+          }
+          });
+       return org?true:false
+      }
+  return true
+  }
+
      }
